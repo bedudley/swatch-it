@@ -40,33 +40,27 @@ export default function PlayPage() {
       <div className="bg-primary py-6">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-center gap-6">
-            {pack.logo && (
-              <Logo
-                logo={pack.logo}
-                className="max-h-14"
-                alt={`${pack.title} logo`}
-              />
-            )}
-            <h1 className="text-5xl font-bold text-white">
-              {pack.title}
+            <Logo
+              logo={pack.logo || "default"}
+              className="max-h-14"
+              alt="Swatch It! logo"
+            />
+            <h1 className="text-5xl font-bold text-black">
+              Swatch It! - {pack.title}
             </h1>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto p-6">
-        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-          {/* Game Board */}
-          <div className="xl:col-span-3">
-            <BoardGrid />
-          </div>
+      <div className="max-w-7xl mx-auto p-6 pb-32">
+        {/* Game Board - Full Width */}
+        <BoardGrid />
+      </div>
 
-          {/* Scoreboard */}
-          <div className="xl:col-span-1">
-            <div className="sticky top-6">
-              <Scoreboard showControls={false} />
-            </div>
-          </div>
+      {/* Scoreboard - Fixed at Bottom */}
+      <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border shadow-lg">
+        <div className="max-w-7xl mx-auto p-4">
+          <Scoreboard showControls={false} />
         </div>
       </div>
 

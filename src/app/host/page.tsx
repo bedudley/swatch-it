@@ -36,15 +36,15 @@ export default function HostPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-4">
-            {pack.logo && (
-              <Logo
-                logo={pack.logo}
-                className="max-h-12"
-                alt={`${pack.title} logo`}
-              />
-            )}
+            <Logo
+              logo={pack.logo || "default"}
+              className="max-h-12"
+              alt={`${pack.title} logo`}
+            />
             <div>
-              <h1 className="text-3xl font-bold text-primary">{pack.title}</h1>
+              <h1 className="text-3xl font-bold text-primary">
+                Swatch It! - {pack.title}
+              </h1>
               <p className="text-text-secondary">Host View</p>
             </div>
           </div>

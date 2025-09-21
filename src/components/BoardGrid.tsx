@@ -21,16 +21,19 @@ export default function BoardGrid() {
   const maxClues = Math.max(...categories.map(cat => cat.clues.length));
 
   return (
-    <div className="bg-background-muted p-6 rounded-lg border border-border">
+    <div className="bg-background-muted p-6 rounded-lg border border-border overflow-x-auto">
       <div
         className="grid gap-4"
-        style={{ gridTemplateColumns: `repeat(${numCategories}, 1fr)` }}
+        style={{
+          gridTemplateColumns: `repeat(${numCategories}, minmax(200px, 1fr))`,
+          minWidth: `${numCategories * 220}px`
+        }}
       >
         {/* Category headers */}
         {categories.map((category) => (
           <div
             key={category.id}
-            className="bg-secondary text-white text-center p-6 rounded-lg font-bold text-xl sm:text-2xl lg:text-3xl uppercase tracking-wide shadow-lg"
+            className="bg-secondary text-gray-800 text-center p-6 rounded-lg font-bold text-xl sm:text-2xl lg:text-3xl uppercase tracking-wide shadow-lg"
             style={{ minHeight: "120px" }}
           >
             <div className="flex items-center justify-center h-full">

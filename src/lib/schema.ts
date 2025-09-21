@@ -28,10 +28,6 @@ export const PackSchema = z.object({
     z.enum(["default", "default-art", "default-fashion", "default-general"]), // built-in logos
     z.string().url() // external URL (fallback)
   ]).optional(),
-  theme: z.object({
-    primary: z.string(),
-    accent: z.string()
-  }).optional(),
   board: z.object({
     columns: z.number().int().positive().default(5),
     rows: z.number().int().positive().default(5),

@@ -78,15 +78,17 @@ export default function AdminPage() {
 
   const handleDragLeave = (e: React.DragEvent) => {
     e.preventDefault();
-    setIsDragOver(false);
+    // Only set dragOver to false if we're leaving the drop zone entirely
+    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+      setIsDragOver(false);
+    }
   };
 
   const loadSamplePack = () => {
     const samplePack = {
       packId: "color-style-sampler",
-      title: "Swatch It! — Color & Style Sampler",
+      title: "Color & Style Sampler",
       logo: "default",
-      theme: { primary: "#0ea5e9", accent: "#f59e0b" },
       board: {
         columns: 5,
         rows: 5,
