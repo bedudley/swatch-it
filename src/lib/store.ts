@@ -232,11 +232,20 @@ export const useGameStore = create<GameStore>()(
     },
 
     resetGame: () => {
-      set({
+      const state = get();
+      const resetTeams = state.teams.map(team => ({
+        ...team,
+        score: 0 // Reset all scores to 0
+      }));
+
+      const newState = {
         ...initialState,
-        pack: get().pack, // Keep the current pack
-        teams: get().teams, // Keep the teams
-      });
+        pack: state.pack, // Keep the current pack
+        teams: resetTeams, // Keep teams but reset scores
+      };
+
+      set(newState);
+      broadcastState(newState);
     },
 
     isClueOpened: (categoryId: string, value: number) => {

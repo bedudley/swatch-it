@@ -18,6 +18,7 @@ export default function AdminPage() {
   const [newTeamName, setNewTeamName] = useState("");
   const [jsonInput, setJsonInput] = useState("");
   const [error, setError] = useState("");
+  const [isDragOver, setIsDragOver] = useState(false);
 
   const handleAddTeam = () => {
     if (newTeamName.trim()) {
@@ -36,6 +37,48 @@ export default function AdminPage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Invalid JSON format");
     }
+  };
+
+  const handleFileUpload = (file: File) => {
+    if (!file.type.includes("json")) {
+      setError("Please select a JSON file");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const content = e.target?.result as string;
+        const parsed = JSON.parse(content);
+        const validated = PackSchema.parse(parsed);
+        setPack(validated);
+        setJsonInput(""); // Clear textarea when file is loaded
+        setError("");
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Invalid JSON file format");
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0) {
+      handleFileUpload(files[0]);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
   };
 
   const loadSamplePack = () => {
@@ -109,7 +152,51 @@ export default function AdminPage() {
               </button>
             </div>
 
+            {/* File Upload Drop Zone */}
             <div>
+              <h3 className="text-lg font-semibold mb-2 text-text-primary">Upload Pack File</h3>
+              <div
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                  isDragOver
+                    ? "border-primary bg-primary/5"
+                    : "border-border hover:border-primary/50"
+                }`}
+              >
+                <div className="space-y-4">
+                  <div className="text-4xl">📁</div>
+                  <div>
+                    <p className="text-lg font-medium text-text-primary">
+                      Drop your JSON pack file here
+                    </p>
+                    <p className="text-text-secondary">or</p>
+                  </div>
+                  <input
+                    type="file"
+                    accept=".json"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        handleFileUpload(file);
+                      }
+                    }}
+                    className="hidden"
+                    id="pack-file-input"
+                  />
+                  <label
+                    htmlFor="pack-file-input"
+                    className="inline-block bg-secondary text-white px-6 py-3 rounded-lg hover:bg-secondary/90 cursor-pointer font-medium transition-colors"
+                  >
+                    Choose File
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative">
+              <h3 className="text-lg font-semibold mb-2 text-text-primary">Or Paste JSON</h3>
               <textarea
                 value={jsonInput}
                 onChange={(e) => setJsonInput(e.target.value)}
