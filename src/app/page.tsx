@@ -12,12 +12,12 @@ export default function HomePage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center">
+    <div className="min-h-screen bg-background-light flex items-center justify-center">
       <div className="text-center">
         <h1 className="text-4xl font-bold text-primary mb-4">
           Swatch It!
         </h1>
-        <p className="text-lg text-foreground/70 mb-8">
+        <p className="text-lg text-text-secondary mb-8">
           Loading game...
         </p>
       </div>

@@ -16,15 +16,22 @@ export default function BoardGrid() {
 
   const { categories } = pack.board;
 
+  // Calculate grid dimensions
+  const numCategories = categories.length;
+  const maxClues = Math.max(...categories.map(cat => cat.clues.length));
+
   return (
-    <div className="bg-blue-900 p-4 rounded-lg">
-      <div className="grid grid-cols-5 gap-2">
+    <div className="bg-background-muted p-6 rounded-lg border border-border">
+      <div
+        className="grid gap-4"
+        style={{ gridTemplateColumns: `repeat(${numCategories}, 1fr)` }}
+      >
         {/* Category headers */}
-        {categories.slice(0, 5).map((category) => (
+        {categories.map((category) => (
           <div
             key={category.id}
-            className="bg-blue-800 text-white text-center p-4 rounded font-bold text-lg uppercase tracking-wide"
-            style={{ minHeight: "80px" }}
+            className="bg-secondary text-white text-center p-6 rounded-lg font-bold text-xl sm:text-2xl lg:text-3xl uppercase tracking-wide shadow-lg"
+            style={{ minHeight: "120px" }}
           >
             <div className="flex items-center justify-center h-full">
               {category.name}
@@ -32,9 +39,9 @@ export default function BoardGrid() {
           </div>
         ))}
 
-        {/* Clue tiles */}
-        {[0, 1, 2, 3, 4].map((rowIndex) =>
-          categories.slice(0, 5).map((category) => {
+        {/* Clue tiles - properly aligned by row */}
+        {Array.from({ length: maxClues }, (_, rowIndex) =>
+          categories.map((category) => {
             const clue = category.clues[rowIndex];
             return clue ? (
               <Tile
@@ -45,8 +52,8 @@ export default function BoardGrid() {
             ) : (
               <div
                 key={`${category.id}-empty-${rowIndex}`}
-                className="bg-gray-400 rounded"
-                style={{ minHeight: "80px" }}
+                className="bg-border rounded-lg"
+                style={{ minHeight: "120px" }}
               />
             );
           })

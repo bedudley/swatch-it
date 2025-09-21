@@ -78,51 +78,53 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-8">
+    <div className="min-h-screen bg-background-light p-8">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold text-primary mb-8">Swatch It! Admin</h1>
 
         {/* Game Pack Section */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-semibold mb-4">Game Pack</h2>
+        <div className="bg-card rounded-lg shadow-md p-6 mb-8">
+          <h2 className="text-2xl font-semibold mb-4 text-text-primary">Game Pack</h2>
 
           {pack ? (
             <div className="mb-4">
-              <p className="text-lg font-medium text-green-600">✓ Loaded: {pack.title}</p>
-              <p className="text-sm text-gray-600">
+              <p className="text-lg font-medium text-success">✓ Loaded: {pack.title}</p>
+              <p className="text-sm text-text-secondary">
                 {pack.board.categories.length} categories,
                 {pack.board.categories.reduce((acc, cat) => acc + cat.clues.length, 0)} clues total
               </p>
             </div>
           ) : (
-            <p className="text-yellow-600 mb-4">No pack loaded</p>
+            <p className="text-warning mb-4">No pack loaded</p>
           )}
 
-          <div className="space-y-4">
-            <button
-              onClick={loadSamplePack}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium mr-4"
-            >
-              Load Sample Pack
-            </button>
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={loadSamplePack}
+                className="bg-primary text-white px-8 py-4 text-lg rounded-lg hover:bg-primary/90 active:bg-primary/80 font-medium min-w-[200px] transition-colors"
+              >
+                Load Sample Pack
+              </button>
+            </div>
 
             <div>
               <textarea
                 value={jsonInput}
                 onChange={(e) => setJsonInput(e.target.value)}
                 placeholder="Paste JSON pack here..."
-                className="w-full h-32 p-3 border rounded resize-none font-mono text-sm"
+                className="w-full h-40 p-4 text-lg border-2 border-border rounded-lg resize-none font-mono focus:border-primary focus:outline-none bg-card text-text-primary"
               />
               <button
                 onClick={handleImportPack}
-                className="mt-2 bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 font-medium"
+                className="mt-4 bg-warning text-white px-8 py-4 text-lg rounded-lg hover:bg-warning/90 active:bg-warning/80 font-medium min-w-[150px] transition-colors"
               >
                 Import Pack
               </button>
             </div>
 
             {error && (
-              <div className="text-red-600 text-sm bg-red-50 p-3 rounded">
+              <div className="text-error text-sm bg-error/10 p-3 rounded border border-error">
                 {error}
               </div>
             )}
@@ -130,41 +132,41 @@ export default function AdminPage() {
         </div>
 
         {/* Teams Section */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-semibold mb-4">Teams</h2>
+        <div className="bg-card rounded-lg shadow-md p-6 mb-8">
+          <h2 className="text-2xl font-semibold mb-4 text-text-primary">Teams</h2>
 
-          <div className="flex gap-2 mb-4">
+          <div className="flex gap-4 mb-6">
             <input
               type="text"
               value={newTeamName}
               onChange={(e) => setNewTeamName(e.target.value)}
               placeholder="Team name"
-              className="flex-1 p-2 border rounded"
+              className="flex-1 p-4 text-lg border-2 border-border rounded-lg focus:border-primary focus:outline-none bg-card text-text-primary"
               onKeyPress={(e) => e.key === "Enter" && handleAddTeam()}
             />
             <button
               onClick={handleAddTeam}
-              className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 font-medium"
+              className="bg-success text-white px-8 py-4 text-lg rounded-lg hover:bg-success/90 active:bg-success/80 font-medium min-w-[120px] transition-colors"
             >
               Add Team
             </button>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-4">
             {teams.map((team) => (
-              <div key={team.id} className="flex items-center gap-2 p-2 border rounded">
+              <div key={team.id} className="flex items-center gap-4 p-4 border-2 border-border rounded-lg bg-background-muted">
                 <input
                   type="text"
                   value={team.name}
                   onChange={(e) => updateTeamName(team.id, e.target.value)}
-                  className="flex-1 p-1 border rounded"
+                  className="flex-1 p-3 text-lg border-2 border-border rounded-lg focus:border-primary focus:outline-none bg-card text-text-primary"
                 />
-                <span className="font-mono text-sm w-16 text-center">
+                <span className="font-mono text-lg font-semibold w-20 text-center bg-card p-2 rounded border border-border text-text-primary">
                   {team.score}
                 </span>
                 <button
                   onClick={() => removeTeam(team.id)}
-                  className="text-red-600 hover:text-red-800 px-2 py-1"
+                  className="text-error hover:text-error/80 active:text-error/60 px-4 py-3 text-lg font-medium min-w-[100px] transition-colors"
                 >
                   Remove
                 </button>
@@ -173,20 +175,20 @@ export default function AdminPage() {
           </div>
 
           {teams.length === 0 && (
-            <p className="text-gray-500 text-center py-4">No teams added yet</p>
+            <p className="text-text-secondary text-center py-4">No teams added yet</p>
           )}
         </div>
 
         {/* Game Controls */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-semibold mb-4">Game Controls</h2>
+        <div className="bg-card rounded-lg shadow-md p-6">
+          <h2 className="text-2xl font-semibold mb-4 text-text-primary">Game Controls</h2>
 
-          <div className="space-x-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             <a
               href="/host"
-              className={`inline-block px-6 py-3 rounded text-white font-medium ${
+              className={`inline-block px-8 py-4 text-lg rounded-lg text-white font-medium text-center min-w-[200px] transition-colors ${
                 pack && teams.length > 0
-                  ? "bg-green-600 hover:bg-green-700"
+                  ? "bg-success hover:bg-success/90 active:bg-success/80"
                   : "bg-gray-400 cursor-not-allowed"
               }`}
             >
@@ -195,9 +197,9 @@ export default function AdminPage() {
 
             <a
               href="/play"
-              className={`inline-block px-6 py-3 rounded text-white font-medium ${
+              className={`inline-block px-8 py-4 text-lg rounded-lg text-white font-medium text-center min-w-[200px] transition-colors ${
                 pack && teams.length > 0
-                  ? "bg-blue-600 hover:bg-blue-700"
+                  ? "bg-primary hover:bg-primary/90 active:bg-primary/80"
                   : "bg-gray-400 cursor-not-allowed"
               }`}
             >
@@ -206,14 +208,14 @@ export default function AdminPage() {
 
             <button
               onClick={resetGame}
-              className="px-6 py-3 rounded bg-red-600 text-white hover:bg-red-700"
+              className="px-8 py-4 text-lg rounded-lg bg-error text-white hover:bg-error/90 active:bg-error/80 font-medium min-w-[150px] transition-colors"
             >
               Reset Game
             </button>
           </div>
 
           {(!pack || teams.length === 0) && (
-            <p className="text-yellow-600 mt-4 text-sm">
+            <p className="text-warning mt-4 text-sm">
               ⚠️ Load a pack and add teams before starting the game
             </p>
           )}

@@ -11,9 +11,9 @@ export default function Scoreboard({ showControls = false }: ScoreboardProps) {
 
   if (teams.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-4">
-        <h2 className="text-xl font-bold mb-4">Scoreboard</h2>
-        <p className="text-gray-500">No teams added yet</p>
+      <div className="bg-card rounded-lg shadow-md p-4">
+        <h2 className="text-xl font-bold mb-4 text-text-primary">Scoreboard</h2>
+        <p className="text-text-secondary">No teams added yet</p>
       </div>
     );
   }
@@ -21,48 +21,48 @@ export default function Scoreboard({ showControls = false }: ScoreboardProps) {
   const sortedTeams = [...teams].sort((a, b) => b.score - a.score);
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Scoreboard</h2>
+    <div className="bg-card rounded-lg shadow-md p-4">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-text-primary">Scoreboard</h2>
         {showControls && (
           <button
             onClick={undo}
-            className="bg-orange-600 text-white px-3 py-1 rounded text-sm hover:bg-orange-700"
+            className="bg-warning text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-warning/90 active:bg-warning/80 min-w-[120px] transition-colors"
           >
             Undo Last
           </button>
         )}
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-4">
         {sortedTeams.map((team, index) => (
           <div
             key={team.id}
-            className={`flex items-center justify-between p-3 rounded ${
+            className={`flex items-center justify-between p-4 rounded-lg ${
               index === 0 && team.score > 0
-                ? "bg-yellow-100 border-2 border-yellow-400"
-                : "bg-gray-50"
+                ? "bg-warning/10 border-2 border-warning"
+                : "bg-background-muted border-2 border-border"
             }`}
           >
-            <div className="flex items-center gap-3">
-              <span className="text-lg font-bold text-gray-600 w-6">
+            <div className="flex items-center gap-4">
+              <span className="text-xl font-bold text-text-secondary w-8">
                 #{index + 1}
               </span>
-              <span className="font-medium">{team.name}</span>
+              <span className="font-medium text-lg text-text-primary">{team.name}</span>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               {showControls && (
-                <div className="flex gap-1">
+                <div className="flex gap-2">
                   <button
                     onClick={() => updateTeamScore(team.id, team.score - 100)}
-                    className="bg-red-500 text-white w-8 h-8 rounded text-sm hover:bg-red-600"
+                    className="bg-error text-white w-12 h-12 rounded-lg text-lg font-bold hover:bg-error/90 active:bg-error/80 transition-colors flex items-center justify-center"
                   >
                     -
                   </button>
                   <button
                     onClick={() => updateTeamScore(team.id, team.score + 100)}
-                    className="bg-green-500 text-white w-8 h-8 rounded text-sm hover:bg-green-600"
+                    className="bg-success text-white w-12 h-12 rounded-lg text-lg font-bold hover:bg-success/90 active:bg-success/80 transition-colors flex items-center justify-center"
                   >
                     +
                   </button>
@@ -70,12 +70,12 @@ export default function Scoreboard({ showControls = false }: ScoreboardProps) {
               )}
 
               <span
-                className={`text-2xl font-bold ${
+                className={`text-2xl font-bold min-w-[80px] text-right ${
                   team.score > 0
-                    ? "text-green-600"
+                    ? "text-success"
                     : team.score < 0
-                    ? "text-red-600"
-                    : "text-gray-600"
+                    ? "text-error"
+                    : "text-text-secondary"
                 }`}
               >
                 ${team.score}

@@ -10,17 +10,17 @@ export default function HostPage() {
 
   if (!pack || teams.length === 0) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-background-light flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-primary mb-4">
             Host View
           </h1>
-          <p className="text-lg text-foreground/70 mb-8">
+          <p className="text-lg text-text-secondary mb-8">
             Please configure the game in the admin panel first.
           </p>
           <a
             href="/admin"
-            className="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary-600"
+            className="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90"
           >
             Go to Admin
           </a>
@@ -30,18 +30,18 @@ export default function HostPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
+    <div className="min-h-screen bg-background-muted p-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-3xl font-bold text-primary">{pack.title}</h1>
-            <p className="text-gray-600">Host View</p>
+            <p className="text-text-secondary">Host View</p>
           </div>
           <div className="flex gap-4">
             <a
               href="/play"
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              className="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -49,7 +49,7 @@ export default function HostPage() {
             </a>
             <a
               href="/admin"
-              className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+              className="bg-text-secondary text-white px-4 py-2 rounded hover:bg-text-secondary/90"
             >
               Back to Admin
             </a>
@@ -67,9 +67,9 @@ export default function HostPage() {
             <Scoreboard showControls={true} />
 
             {/* Game Info */}
-            <div className="bg-white rounded-lg shadow-md p-4">
-              <h3 className="text-lg font-bold mb-2">Game Info</h3>
-              <div className="text-sm text-gray-600 space-y-1">
+            <div className="bg-card rounded-lg shadow-md p-4">
+              <h3 className="text-lg font-bold mb-2 text-text-primary">Game Info</h3>
+              <div className="text-sm text-text-secondary space-y-1">
                 <p>Categories: {pack.board.categories.length}</p>
                 <p>
                   Total Clues: {pack.board.categories.reduce((acc, cat) => acc + cat.clues.length, 0)}
@@ -79,9 +79,9 @@ export default function HostPage() {
             </div>
 
             {/* Controls */}
-            <div className="bg-white rounded-lg shadow-md p-4">
-              <h3 className="text-lg font-bold mb-2">Controls</h3>
-              <div className="space-y-2 text-sm text-gray-600">
+            <div className="bg-card rounded-lg shadow-md p-4">
+              <h3 className="text-lg font-bold mb-2 text-text-primary">Controls</h3>
+              <div className="space-y-2 text-sm text-text-secondary">
                 <p>• Click tiles to open clues</p>
                 <p>• Use +/- buttons to adjust scores</p>
                 <p>• "Undo Last" to revert actions</p>
