@@ -1,12 +1,22 @@
 "use client";
 
 import { useGameStore } from "@/lib/store";
+import { useSyncListener } from "@/lib/useSyncListener";
 import BoardGrid from "@/components/BoardGrid";
 import ClueModal from "@/components/ClueModal";
 import Scoreboard from "@/components/Scoreboard";
 
 export default function PlayPage() {
-  const { pack, teams } = useGameStore();
+  const pack = useGameStore((state) => state.pack);
+  const teams = useGameStore((state) => state.teams);
+  const currentClue = useGameStore((state) => state.currentClue);
+  const showAnswer = useGameStore((state) => state.showAnswer);
+
+  // Set up sync listener to receive updates from host
+  useSyncListener();
+
+  // Debug: Log state changes
+  console.log('Play page render - currentClue:', currentClue, 'showAnswer:', showAnswer);
 
   if (!pack || teams.length === 0) {
     return (

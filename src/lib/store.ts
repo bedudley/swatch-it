@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { GameState, Team, Pack, Clue } from "./schema";
+import { getGameSync } from "./sync";
 
 interface GameStore extends GameState {
   // Pack management
@@ -29,6 +30,9 @@ interface GameStore extends GameState {
   // Game state
   resetGame: () => void;
   isClueOpened: (categoryId: string, value: number) => boolean;
+
+  // Sync actions
+  applySyncUpdate: (syncData: Partial<GameState>) => void;
 }
 
 const initialState: GameState = {
@@ -39,6 +43,15 @@ const initialState: GameState = {
   pack: null,
   currentClue: null,
   showAnswer: false,
+};
+
+// Initialize sync
+const gameSync = getGameSync();
+
+// Helper to broadcast state changes
+const broadcastState = (partialState: Partial<GameState>) => {
+  console.log('Broadcasting state:', partialState); // Debug log
+  gameSync.broadcast(partialState);
 };
 
 export const useGameStore = create<GameStore>()(
@@ -97,12 +110,15 @@ export const useGameStore = create<GameStore>()(
 
       const key = `${categoryId}:${value}`;
 
-      set({
+      const newState = {
         currentClue: { categoryId, value, clue },
         showAnswer: false,
         opened: { ...state.opened, [key]: true },
         boardDisabled: true,
-      });
+      };
+
+      set(newState);
+      broadcastState(newState);
 
       // Add to history
       const action = {
@@ -116,15 +132,19 @@ export const useGameStore = create<GameStore>()(
     },
 
     closeClue: () => {
-      set({
+      const newState = {
         currentClue: null,
         showAnswer: false,
         boardDisabled: false,
-      });
+      };
+      set(newState);
+      broadcastState(newState);
     },
 
     revealAnswer: () => {
-      set({ showAnswer: true });
+      const newState = { showAnswer: true };
+      set(newState);
+      broadcastState(newState);
     },
 
     markCorrect: (teamId: string) => {
@@ -133,13 +153,18 @@ export const useGameStore = create<GameStore>()(
 
       const points = state.currentClue.value;
 
+      const updatedTeams = state.teams.map((team) =>
+        team.id === teamId
+          ? { ...team, score: team.score + points }
+          : team
+      );
+
       set((state) => ({
-        teams: state.teams.map((team) =>
-          team.id === teamId
-            ? { ...team, score: team.score + points }
-            : team
-        ),
+        teams: updatedTeams,
       }));
+
+      // Broadcast team score update
+      broadcastState({ teams: updatedTeams });
 
       // Add scoring action to history
       const action = {
@@ -218,6 +243,14 @@ export const useGameStore = create<GameStore>()(
       const key = `${categoryId}:${value}`;
       return !!get().opened[key];
     },
+
+    applySyncUpdate: (syncData: Partial<GameState>) => {
+      console.log('Applying sync update:', syncData); // Debug log
+      set((state) => ({
+        ...state,
+        ...syncData,
+      }));
+    },
   }),
   {
     name: 'swatch-it-storage',
@@ -228,3 +261,5 @@ export const useGameStore = create<GameStore>()(
     }),
   }
 ));
+
+// Note: Sync listener is set up in useSyncListener hook
