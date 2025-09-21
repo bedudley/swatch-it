@@ -1,0 +1,70 @@
+{
+  "packId": "color-style-sampler",
+  "title": "Swatch It! — Color & Style Sampler",
+  "theme": { "primary": "#0ea5e9", "accent": "#f59e0b" },
+  "board": {
+    "columns": 5,
+    "rows": 5,
+    "categories": [
+      {
+        "id": "ct1",
+        "name": "Color Theory",
+        "clues": [
+          { "value": 100, "prompt": "Primary colors in subtractive (CMY) mixing?", "answer": "Cyan, Magenta, Yellow", "type": "text" },
+          { "value": 200, "prompt": "Warm vs cool: is red warm or cool?", "answer": "Warm", "type": "text" },
+          { "value": 300, "prompt": "Opposite of green on standard color wheel?", "answer": "Red", "type": "text" },
+          { "value": 400, "prompt": "Term for colors next to each other on the wheel?", "answer": "Analogous", "type": "text" },
+          { "value": 500, "prompt": "Name a triadic set including blue.", "answer": "Red, Yellow, Blue (one example)", "type": "text" }
+        ]
+      },
+      {
+        "id": "st1",
+        "name": "Style Basics",
+        "clues": [
+          { "value": 100, "prompt": "Neutral color often used as a base in wardrobes?", "answer": "Black (or navy/gray/tan acceptable)", "type": "text" },
+          { "value": 200, "prompt": "Term for an outfit's main attention‑drawing element?", "answer": "Statement piece", "type": "text" },
+          { "value": 300, "prompt": "The rule of three applies to what in styling?", "answer": "Color or layers/accessories", "type": "text" },
+          { "value": 400, "prompt": "What undertone pairs best with cool complexions?", "answer": "Cool undertones (blue/pink)", "type": "text" },
+          { "value": 500, "prompt": "Name a capsule wardrobe benefit.", "answer": "Mix‑and‑match simplicity (or reduced decision fatigue)", "type": "text" }
+        ]
+      },
+      {
+        "id": "mt1",
+        "name": "Materials",
+        "clues": [
+          { "value": 100, "prompt": "Plant‑based fiber often used for breathable summer wear?", "answer": "Linen", "type": "text" },
+          { "value": 200, "prompt": "Protein fiber from sheep?", "answer": "Wool", "type": "text" },
+          { "value": 300, "prompt": "Synthetic known for stretch and recovery?", "answer": "Spandex/Elastane", "type": "text" },
+          { "value": 400, "prompt": "Silk's sheen is due to what fiber structure?", "answer": "Triangular prism‑like cross‑section (refracts light)", "type": "text" },
+          { "value": 500, "prompt": "Viscose is a form of what?", "answer": "Rayon (regenerated cellulose)", "type": "text" }
+        ]
+      },
+      {
+        "id": "hx1",
+        "name": "History",
+        "clues": [
+          { "value": 100, "prompt": "Decade famous for flapper dresses?", "answer": "1920s", "type": "text" },
+          { "value": 200, "prompt": "Dior's post‑war silhouette name?", "answer": "New Look", "type": "text" },
+          { "value": 300, "prompt": "Tie‑dye boom decade?", "answer": "1960s", "type": "text" },
+          { "value": 400, "prompt": "Minimalist fashion rose in which 1990s city movement?", "answer": "Antwerp Six/German minimalism (acceptable)", "type": "text" },
+          { "value": 500, "prompt": "Japanese designer known for deconstruction?", "answer": "Rei Kawakubo (Comme des Garçons)", "type": "text" }
+        ]
+      },
+      {
+        "id": "fx1",
+        "name": "Finish & Care",
+        "clues": [
+          { "value": 100, "prompt": "Icon with a basin of water indicates?", "answer": "Washing (machine/hand)", "type": "text" },
+          { "value": 200, "prompt": "Circle with 'P' on care label?", "answer": "Professional dry clean, any solvent except trichloroethylene", "type": "text" },
+          { "value": 300, "prompt": "Best practice to preserve sweater shape?", "answer": "Dry flat (reshape while damp)", "type": "text" },
+          { "value": 400, "prompt": "Finish that resists wrinkles?", "answer": "Easy‑care/resin finish", "type": "text" },
+          { "value": 500, "prompt": "What does 'GSM' measure?", "answer": "Fabric weight (grams per square meter)", "type": "text" }
+        ]
+      }
+    ]
+  },
+  "finalRound": {
+    "prompt": "In classic seasonal color analysis, which season suits cool, light, and soft tones?",
+    "answer": "Summer"
+  }
+}
