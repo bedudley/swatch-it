@@ -4,6 +4,7 @@ import { useGameStore } from "@/lib/store";
 import BoardGrid from "@/components/BoardGrid";
 import ClueModal from "@/components/ClueModal";
 import Scoreboard from "@/components/Scoreboard";
+import Logo from "@/components/Logo";
 
 export default function HostPage() {
   const { pack, teams } = useGameStore();
@@ -34,9 +35,18 @@ export default function HostPage() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-primary">{pack.title}</h1>
-            <p className="text-text-secondary">Host View</p>
+          <div className="flex items-center gap-4">
+            {pack.logo && (
+              <Logo
+                logo={pack.logo}
+                className="max-h-12"
+                alt={`${pack.title} logo`}
+              />
+            )}
+            <div>
+              <h1 className="text-3xl font-bold text-primary">{pack.title}</h1>
+              <p className="text-text-secondary">Host View</p>
+            </div>
           </div>
           <div className="flex gap-4">
             <a

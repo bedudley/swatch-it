@@ -42,6 +42,7 @@ export default function AdminPage() {
     const samplePack = {
       packId: "color-style-sampler",
       title: "Swatch It! — Color & Style Sampler",
+      logo: "default",
       theme: { primary: "#0ea5e9", accent: "#f59e0b" },
       board: {
         columns: 5,

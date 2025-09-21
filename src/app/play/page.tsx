@@ -5,6 +5,7 @@ import { useSyncListener } from "@/lib/useSyncListener";
 import BoardGrid from "@/components/BoardGrid";
 import ClueModal from "@/components/ClueModal";
 import Scoreboard from "@/components/Scoreboard";
+import Logo from "@/components/Logo";
 
 export default function PlayPage() {
   const pack = useGameStore((state) => state.pack);
@@ -38,9 +39,18 @@ export default function PlayPage() {
       {/* Header */}
       <div className="bg-primary py-6">
         <div className="max-w-7xl mx-auto px-4">
-          <h1 className="text-5xl font-bold text-center text-white">
-            {pack.title}
-          </h1>
+          <div className="flex items-center justify-center gap-6">
+            {pack.logo && (
+              <Logo
+                logo={pack.logo}
+                className="max-h-14"
+                alt={`${pack.title} logo`}
+              />
+            )}
+            <h1 className="text-5xl font-bold text-white">
+              {pack.title}
+            </h1>
+          </div>
         </div>
       </div>
 

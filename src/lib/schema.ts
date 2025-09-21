@@ -23,6 +23,11 @@ export const CategorySchema = z.object({
 export const PackSchema = z.object({
   packId: z.string(),
   title: z.string(),
+  logo: z.union([
+    z.string().startsWith("data:image/"), // base64 data URL
+    z.enum(["default", "default-art", "default-fashion", "default-general"]), // built-in logos
+    z.string().url() // external URL (fallback)
+  ]).optional(),
   theme: z.object({
     primary: z.string(),
     accent: z.string()
