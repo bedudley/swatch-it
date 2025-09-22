@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useGameStore } from "@/lib/store";
-import { PackSchema } from "@/lib/schema";
+import { PackSchema, Pack } from "@/lib/schema";
 
 export default function AdminPage() {
   const {
@@ -137,7 +137,7 @@ export default function AdminPage() {
   };
 
   const loadSamplePack = () => {
-    const samplePack = {
+    const samplePack: Pack = {
       packId: "color-style-sampler",
       title: "Color & Style Sampler",
       logo: "default",

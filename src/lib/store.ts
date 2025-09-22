@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { GameState, Team, Pack, Clue } from "./schema";
+import { GameState, Pack } from "./schema";
 import { getGameSync } from "./sync";
 
 interface GameStore extends GameState {
@@ -198,9 +198,7 @@ export const useGameStore = create<GameStore>()(
           : team
       );
 
-      set((state) => ({
-        teams: updatedTeams,
-      }));
+      set({ teams: updatedTeams });
 
       // Broadcast team score update
       broadcastState({ teams: updatedTeams });

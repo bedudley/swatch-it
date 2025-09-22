@@ -1,7 +1,9 @@
+import type { GameState } from './schema';
+
 // Cross-tab state synchronization using BroadcastChannel API
 export class GameSync {
   private channel: BroadcastChannel | null = null;
-  private listeners: Set<(data: any) => void> = new Set();
+  private listeners: Set<(data: Partial<GameState>) => void> = new Set();
   private isSupported: boolean;
 
   constructor() {
@@ -25,7 +27,7 @@ export class GameSync {
   }
 
   // Broadcast state changes to other tabs
-  broadcast(stateUpdate: any) {
+  broadcast(stateUpdate: Partial<GameState>) {
     if (this.channel) {
       try {
         // Send state update directly - no extra wrapping
@@ -37,7 +39,7 @@ export class GameSync {
   }
 
   // Subscribe to state updates from other tabs
-  subscribe(listener: (data: any) => void) {
+  subscribe(listener: (data: Partial<GameState>) => void) {
     this.listeners.add(listener);
 
     // Return unsubscribe function
