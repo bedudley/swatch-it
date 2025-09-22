@@ -151,10 +151,30 @@ export const useGameStore = create<GameStore>()(
     },
 
     closeClue: () => {
+      const state = get();
+
+      // If there's a current clue, check if it was scored
+      let updatedOpened = state.opened;
+      if (state.currentClue) {
+        const key = `${state.currentClue.categoryId}:${state.currentClue.value}`;
+
+        // Check if this clue was scored (has a scoring action in history)
+        const wasScored = state.history.some(
+          action => action.key === key && action.teamId && action.delta
+        );
+
+        // If not scored, remove from opened so it can be clicked again
+        if (!wasScored) {
+          updatedOpened = { ...state.opened };
+          delete updatedOpened[key];
+        }
+      }
+
       const newState = {
         currentClue: null,
         showAnswer: false,
         boardDisabled: false,
+        opened: updatedOpened,
       };
       set(newState);
       broadcastState(newState);

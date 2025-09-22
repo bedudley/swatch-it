@@ -115,17 +115,6 @@ export default function ClueModal({ showControls = false }: ClueModalProps) {
             </div>
           )}
 
-          {/* Simple close for display mode */}
-          {!showControls && (
-            <div className="text-center">
-              <button
-                onClick={closeClue}
-                className="bg-text-secondary text-white px-6 py-2 rounded hover:bg-text-secondary/90"
-              >
-                Close
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </div>
