@@ -38,51 +38,55 @@ export default function Scoreboard({ showControls = false }: ScoreboardProps) {
       {/* Teams in Horizontal Layout */}
       <div className="flex items-center gap-4 lg:gap-6 flex-1 justify-center overflow-x-auto">
         {sortedTeams.map((team, index) => (
-          <div
-            key={team.id}
-            className={`flex items-center gap-2 lg:gap-3 p-2 lg:p-3 rounded-lg flex-shrink-0 ${
-              index === 0 && team.score > 0
-                ? "bg-warning/10 border-2 border-warning"
-                : "bg-background-muted border border-border"
-            }`}
-          >
-            {/* Rank */}
-            <span className="text-sm font-bold text-text-secondary">
-              #{index + 1}
-            </span>
+          <div key={team.id} className="flex items-center gap-2 flex-shrink-0">
+            {/* Minus Button (left side, only when showControls) */}
+            {showControls && (
+              <button
+                onClick={() => updateTeamScore(team.id, team.score - 100)}
+                className="bg-error text-white w-10 h-10 rounded-lg text-lg font-bold hover:bg-error/90 active:bg-error/80 transition-colors flex items-center justify-center"
+              >
+                -
+              </button>
+            )}
 
-            {/* Team Name */}
-            <span className="font-medium text-sm lg:text-base text-text-primary">{team.name}</span>
-
-            {/* Score */}
-            <span
-              className={`text-base lg:text-lg font-bold min-w-[50px] lg:min-w-[60px] text-right ${
-                team.score > 0
-                  ? "text-success"
-                  : team.score < 0
-                  ? "text-error"
-                  : "text-text-secondary"
+            {/* Team Card */}
+            <div
+              className={`flex items-center gap-2 lg:gap-3 p-2 lg:p-3 rounded-lg ${
+                index === 0 && team.score > 0
+                  ? "bg-warning/10 border-2 border-warning"
+                  : "bg-background-muted border border-border"
               }`}
             >
-              ${team.score}
-            </span>
+              {/* Rank */}
+              <span className="text-sm font-bold text-text-secondary">
+                #{index + 1}
+              </span>
 
-            {/* Controls (only when showControls) */}
+              {/* Team Name */}
+              <span className="font-medium text-sm lg:text-base text-text-primary">{team.name}</span>
+
+              {/* Score */}
+              <span
+                className={`text-base lg:text-lg font-bold min-w-[50px] lg:min-w-[60px] text-right ${
+                  team.score > 0
+                    ? "text-success"
+                    : team.score < 0
+                    ? "text-error"
+                    : "text-text-secondary"
+                }`}
+              >
+                ${team.score}
+              </span>
+            </div>
+
+            {/* Plus Button (right side, only when showControls) */}
             {showControls && (
-              <div className="flex gap-1 ml-2">
-                <button
-                  onClick={() => updateTeamScore(team.id, team.score - 100)}
-                  className="bg-error text-white w-8 h-8 rounded text-sm font-bold hover:bg-error/90 active:bg-error/80 transition-colors flex items-center justify-center"
-                >
-                  -
-                </button>
-                <button
-                  onClick={() => updateTeamScore(team.id, team.score + 100)}
-                  className="bg-success text-white w-8 h-8 rounded text-sm font-bold hover:bg-success/90 active:bg-success/80 transition-colors flex items-center justify-center"
-                >
-                  +
-                </button>
-              </div>
+              <button
+                onClick={() => updateTeamScore(team.id, team.score + 100)}
+                className="bg-success text-white w-10 h-10 rounded-lg text-lg font-bold hover:bg-success/90 active:bg-success/80 transition-colors flex items-center justify-center"
+              >
+                +
+              </button>
             )}
           </div>
         ))}

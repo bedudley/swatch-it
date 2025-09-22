@@ -66,38 +66,16 @@ export default function HostPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Game Board */}
-          <div className="lg:col-span-3">
-            <BoardGrid />
-          </div>
+        {/* Game Board - Full Width */}
+        <div className="pb-32">
+          <BoardGrid />
+        </div>
+      </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            <Scoreboard showControls={true} />
-
-            {/* Game Info */}
-            <div className="bg-card rounded-lg shadow-md p-4">
-              <h3 className="text-lg font-bold mb-2 text-text-primary">Game Info</h3>
-              <div className="text-sm text-text-secondary space-y-1">
-                <p>Categories: {pack.board.categories.length}</p>
-                <p>
-                  Total Clues: {pack.board.categories.reduce((acc, cat) => acc + cat.clues.length, 0)}
-                </p>
-                <p>Teams: {teams.length}</p>
-              </div>
-            </div>
-
-            {/* Controls */}
-            <div className="bg-card rounded-lg shadow-md p-4">
-              <h3 className="text-lg font-bold mb-2 text-text-primary">Controls</h3>
-              <div className="space-y-2 text-sm text-text-secondary">
-                <p>• Click tiles to open clues</p>
-                <p>• Use +/- buttons to adjust scores</p>
-                <p>• "Undo Last" to revert actions</p>
-              </div>
-            </div>
-          </div>
+      {/* Scoreboard - Fixed at Bottom */}
+      <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border shadow-lg">
+        <div className="max-w-7xl mx-auto p-4">
+          <Scoreboard showControls={true} />
         </div>
       </div>
 

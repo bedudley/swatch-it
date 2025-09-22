@@ -60,42 +60,61 @@ export const useGameStore = create<GameStore>()(
     ...initialState,
 
     setPack: (pack: Pack) => {
-      set((state) => ({
+      const newState = {
         pack,
         opened: {},
         history: [],
         currentClue: null,
         showAnswer: false,
-      }));
+      };
+      set(newState);
+      broadcastState(newState);
     },
 
     addTeam: (name: string) => {
       const id = `team-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      set((state) => ({
-        teams: [...state.teams, { id, name, score: 0 }],
-      }));
+      const newTeam = { id, name, score: 0 };
+      const state = get();
+      const updatedTeams = [...state.teams, newTeam];
+
+      set({ teams: updatedTeams });
+
+      // Broadcast team addition
+      broadcastState({ teams: updatedTeams });
     },
 
     removeTeam: (teamId: string) => {
-      set((state) => ({
-        teams: state.teams.filter((team) => team.id !== teamId),
-      }));
+      const state = get();
+      const updatedTeams = state.teams.filter((team) => team.id !== teamId);
+
+      set({ teams: updatedTeams });
+
+      // Broadcast team removal
+      broadcastState({ teams: updatedTeams });
     },
 
     updateTeamName: (teamId: string, name: string) => {
-      set((state) => ({
-        teams: state.teams.map((team) =>
-          team.id === teamId ? { ...team, name } : team
-        ),
-      }));
+      const state = get();
+      const updatedTeams = state.teams.map((team) =>
+        team.id === teamId ? { ...team, name } : team
+      );
+
+      set({ teams: updatedTeams });
+
+      // Broadcast team name update
+      broadcastState({ teams: updatedTeams });
     },
 
     updateTeamScore: (teamId: string, score: number) => {
-      set((state) => ({
-        teams: state.teams.map((team) =>
-          team.id === teamId ? { ...team, score } : team
-        ),
-      }));
+      const state = get();
+      const updatedTeams = state.teams.map((team) =>
+        team.id === teamId ? { ...team, score } : team
+      );
+
+      set({ teams: updatedTeams });
+
+      // Broadcast team score update
+      broadcastState({ teams: updatedTeams });
     },
 
     openClue: (categoryId: string, value: number) => {
@@ -194,17 +213,17 @@ export const useGameStore = create<GameStore>()(
       if (state.history.length === 0) return;
 
       const lastAction = state.history[state.history.length - 1];
+      let updatedTeams = state.teams;
+      let updatedOpened = state.opened;
 
       // Undo the action
       if (lastAction.teamId && lastAction.delta) {
         // Undo scoring
-        set((state) => ({
-          teams: state.teams.map((team) =>
-            team.id === lastAction.teamId
-              ? { ...team, score: team.score - lastAction.delta! }
-              : team
-          ),
-        }));
+        updatedTeams = state.teams.map((team) =>
+          team.id === lastAction.teamId
+            ? { ...team, score: team.score - lastAction.delta! }
+            : team
+        );
       }
 
       // Remove from opened if this was the action that opened it
@@ -214,17 +233,22 @@ export const useGameStore = create<GameStore>()(
 
       if (actionsForThisClue.length === 1) {
         // This was the only action for this clue, so close it
-        set((state) => {
-          const newOpened = { ...state.opened };
-          delete newOpened[lastAction.key];
-          return { opened: newOpened };
-        });
+        updatedOpened = { ...state.opened };
+        delete updatedOpened[lastAction.key];
       }
 
-      // Remove from history
-      set((state) => ({
+      // Update state
+      set({
+        teams: updatedTeams,
+        opened: updatedOpened,
         history: state.history.slice(0, -1),
-      }));
+      });
+
+      // Broadcast undo changes
+      broadcastState({
+        teams: updatedTeams,
+        opened: updatedOpened,
+      });
     },
 
     clearHistory: () => {
