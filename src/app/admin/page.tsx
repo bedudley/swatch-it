@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useGameStore } from "@/lib/store";
-import { PackSchema, Pack } from "@/lib/schema";
+import { PackSchema } from "@/lib/schema";
 
 export default function AdminPage() {
   const {
@@ -16,7 +16,6 @@ export default function AdminPage() {
   } = useGameStore();
 
   const [newTeamName, setNewTeamName] = useState("");
-  const [jsonInput, setJsonInput] = useState("");
   const [error, setError] = useState("");
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "success" | "error">("idle");
@@ -25,18 +24,6 @@ export default function AdminPage() {
     if (newTeamName.trim()) {
       addTeam(newTeamName.trim());
       setNewTeamName("");
-    }
-  };
-
-  const handleImportPack = () => {
-    try {
-      const parsed = JSON.parse(jsonInput);
-      const validated = PackSchema.parse(parsed);
-      setPack(validated);
-      setJsonInput("");
-      setError("");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Invalid JSON format");
     }
   };
 
@@ -77,7 +64,6 @@ export default function AdminPage() {
         const validated = PackSchema.parse(parsed);
 
         setPack(validated);
-        setJsonInput(""); // Clear textarea when file is loaded
         setError("");
         setUploadStatus("success");
 
@@ -136,44 +122,6 @@ export default function AdminPage() {
     }
   };
 
-  const loadSamplePack = () => {
-    const samplePack: Pack = {
-      packId: "color-style-sampler",
-      title: "Color & Style Sampler",
-      logo: "default",
-      board: {
-        columns: 5,
-        rows: 5,
-        categories: [
-          {
-            id: "ct1",
-            name: "Color Theory",
-            clues: [
-              { value: 100, prompt: "Primary colors in subtractive (CMY) mixing?", answer: "Cyan, Magenta, Yellow", type: "text" },
-              { value: 200, prompt: "Warm vs cool: is red warm or cool?", answer: "Warm", type: "text" },
-              { value: 300, prompt: "Opposite of green on standard color wheel?", answer: "Red", type: "text" },
-              { value: 400, prompt: "Term for colors next to each other on the wheel?", answer: "Analogous", type: "text" },
-              { value: 500, prompt: "Name a triadic set including blue.", answer: "Red, Yellow, Blue (one example)", type: "text" }
-            ]
-          },
-          {
-            id: "st1",
-            name: "Style Basics",
-            clues: [
-              { value: 100, prompt: "Neutral color often used as a base in wardrobes?", answer: "Black (or navy/gray/tan acceptable)", type: "text" },
-              { value: 200, prompt: "Term for an outfit's main attention‑drawing element?", answer: "Statement piece", type: "text" },
-              { value: 300, prompt: "The rule of three applies to what in styling?", answer: "Color or layers/accessories", type: "text" },
-              { value: 400, prompt: "What undertone pairs best with cool complexions?", answer: "Cool undertones (blue/pink)", type: "text" },
-              { value: 500, prompt: "Name a capsule wardrobe benefit.", answer: "Mix‑and‑match simplicity (or reduced decision fatigue)", type: "text" }
-            ]
-          }
-        ]
-      }
-    };
-
-    setPack(samplePack);
-    setError("");
-  };
 
   return (
     <div className="min-h-screen bg-background-light p-8">
@@ -196,34 +144,24 @@ export default function AdminPage() {
             <p className="text-warning mb-4">No pack loaded</p>
           )}
 
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={loadSamplePack}
-                className="bg-primary text-white px-8 py-4 text-lg rounded-lg hover:bg-primary/90 active:bg-primary/80 font-medium min-w-[200px] transition-colors"
-              >
-                Load Sample Pack
-              </button>
-            </div>
-
-            {/* File Upload Drop Zone */}
-            <div>
-              <h3 className="text-lg font-semibold mb-2 text-text-primary">Upload Pack File</h3>
-              <div
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                className={`border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200 ${
-                  uploadStatus === "uploading"
-                    ? "border-warning bg-warning/5 animate-pulse"
-                    : uploadStatus === "success"
-                    ? "border-success bg-success/5"
-                    : uploadStatus === "error"
-                    ? "border-error bg-error/5"
-                    : isDragOver
-                    ? "border-primary bg-primary/5 scale-105"
-                    : "border-border hover:border-primary/50"
-                }`}
+          {/* File Upload Drop Zone */}
+          <div>
+            <h3 className="text-lg font-semibold mb-2 text-text-primary">Upload Pack File</h3>
+            <div
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              className={`border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200 ${
+                uploadStatus === "uploading"
+                  ? "border-warning bg-warning/5 animate-pulse"
+                  : uploadStatus === "success"
+                  ? "border-success bg-success/5"
+                  : uploadStatus === "error"
+                  ? "border-error bg-error/5"
+                  : isDragOver
+                  ? "border-primary bg-primary/5 scale-105"
+                  : "border-border hover:border-primary/50"
+              }`}
               >
                 <div className="space-y-4">
                   {uploadStatus === "uploading" ? (
@@ -294,32 +232,15 @@ export default function AdminPage() {
                     id="pack-file-input"
                     disabled={uploadStatus === "uploading"}
                   />
-                </div>
               </div>
             </div>
-
-            <div className="relative">
-              <h3 className="text-lg font-semibold mb-2 text-text-primary">Or Paste JSON</h3>
-              <textarea
-                value={jsonInput}
-                onChange={(e) => setJsonInput(e.target.value)}
-                placeholder="Paste JSON pack here..."
-                className="w-full h-40 p-4 text-lg border-2 border-border rounded-lg resize-none font-mono focus:border-primary focus:outline-none bg-card text-text-primary"
-              />
-              <button
-                onClick={handleImportPack}
-                className="mt-4 bg-warning text-white px-8 py-4 text-lg rounded-lg hover:bg-warning/90 active:bg-warning/80 font-medium min-w-[150px] transition-colors"
-              >
-                Import Pack
-              </button>
-            </div>
-
-            {error && (
-              <div className="text-error text-sm bg-error/10 p-3 rounded border border-error">
-                {error}
-              </div>
-            )}
           </div>
+
+          {error && (
+            <div className="text-error text-sm bg-error/10 p-3 rounded border border-error">
+              {error}
+            </div>
+          )}
         </div>
 
         {/* Teams Section */}
