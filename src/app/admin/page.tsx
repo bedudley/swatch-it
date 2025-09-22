@@ -19,6 +19,7 @@ export default function AdminPage() {
   const [jsonInput, setJsonInput] = useState("");
   const [error, setError] = useState("");
   const [isDragOver, setIsDragOver] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "success" | "error">("idle");
 
   const handleAddTeam = () => {
     if (newTeamName.trim()) {
@@ -40,24 +41,70 @@ export default function AdminPage() {
   };
 
   const handleFileUpload = (file: File) => {
-    if (!file.type.includes("json")) {
-      setError("Please select a JSON file");
+    // Reset previous states
+    setError("");
+    setUploadStatus("uploading");
+
+    // Validate file type more strictly
+    const validTypes = ["application/json", "text/json"];
+    const isValidType = validTypes.includes(file.type) || file.name.toLowerCase().endsWith('.json');
+
+    if (!isValidType) {
+      setError("Please select a valid JSON file (.json)");
+      setUploadStatus("error");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      setError("File is too large. Please select a file smaller than 5MB.");
+      setUploadStatus("error");
       return;
     }
 
     const reader = new FileReader();
+
     reader.onload = (e) => {
       try {
         const content = e.target?.result as string;
+
+        if (!content || content.trim() === "") {
+          throw new Error("File appears to be empty");
+        }
+
         const parsed = JSON.parse(content);
         const validated = PackSchema.parse(parsed);
+
         setPack(validated);
         setJsonInput(""); // Clear textarea when file is loaded
         setError("");
+        setUploadStatus("success");
+
+        // Reset success status after 3 seconds
+        setTimeout(() => {
+          setUploadStatus("idle");
+        }, 3000);
+
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Invalid JSON file format");
+        let errorMessage = "Failed to load pack file";
+
+        if (err instanceof SyntaxError) {
+          errorMessage = "Invalid JSON format - please check your file syntax";
+        } else if (err instanceof Error) {
+          errorMessage = err.message;
+        }
+
+        setError(errorMessage);
+        setUploadStatus("error");
       }
     };
+
+    reader.onerror = () => {
+      setError("Failed to read file. Please try again.");
+      setUploadStatus("error");
+    };
+
     reader.readAsText(file);
   };
 
@@ -74,6 +121,11 @@ export default function AdminPage() {
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(true);
+    // Reset error state when dragging over
+    if (uploadStatus === "error") {
+      setUploadStatus("idle");
+      setError("");
+    }
   };
 
   const handleDragLeave = (e: React.DragEvent) => {
@@ -161,20 +213,74 @@ export default function AdminPage() {
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
-                className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                  isDragOver
-                    ? "border-primary bg-primary/5"
+                className={`border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200 ${
+                  uploadStatus === "uploading"
+                    ? "border-warning bg-warning/5 animate-pulse"
+                    : uploadStatus === "success"
+                    ? "border-success bg-success/5"
+                    : uploadStatus === "error"
+                    ? "border-error bg-error/5"
+                    : isDragOver
+                    ? "border-primary bg-primary/5 scale-105"
                     : "border-border hover:border-primary/50"
                 }`}
               >
                 <div className="space-y-4">
-                  <div className="text-4xl">📁</div>
-                  <div>
-                    <p className="text-lg font-medium text-text-primary">
-                      Drop your JSON pack file here
-                    </p>
-                    <p className="text-text-secondary">or</p>
-                  </div>
+                  {uploadStatus === "uploading" ? (
+                    <>
+                      <div className="text-4xl animate-spin">⏳</div>
+                      <div>
+                        <p className="text-lg font-medium text-warning">
+                          Uploading and validating pack...
+                        </p>
+                      </div>
+                    </>
+                  ) : uploadStatus === "success" ? (
+                    <>
+                      <div className="text-4xl">✅</div>
+                      <div>
+                        <p className="text-lg font-medium text-success">
+                          Pack uploaded successfully!
+                        </p>
+                        <p className="text-text-secondary text-sm">
+                          {pack?.title}
+                        </p>
+                      </div>
+                    </>
+                  ) : uploadStatus === "error" ? (
+                    <>
+                      <div className="text-4xl">❌</div>
+                      <div>
+                        <p className="text-lg font-medium text-error">
+                          Upload failed
+                        </p>
+                        <p className="text-text-secondary">Try dropping another file</p>
+                      </div>
+                      <label
+                        htmlFor="pack-file-input"
+                        className="inline-block bg-error text-white px-6 py-3 rounded-lg hover:bg-error/90 cursor-pointer font-medium transition-colors"
+                      >
+                        Try Again
+                      </label>
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-4xl">📁</div>
+                      <div>
+                        <p className="text-lg font-medium text-text-primary">
+                          Drop your JSON pack file here
+                        </p>
+                        <p className="text-text-secondary">or</p>
+                      </div>
+                      <label
+                        htmlFor="pack-file-input"
+                        className="inline-block bg-secondary text-white px-6 py-3 rounded-lg hover:bg-secondary/90 cursor-pointer font-medium transition-colors"
+                      >
+                        Choose File
+                      </label>
+                    </>
+                  )}
+
                   <input
                     type="file"
                     accept=".json"
@@ -186,13 +292,8 @@ export default function AdminPage() {
                     }}
                     className="hidden"
                     id="pack-file-input"
+                    disabled={uploadStatus === "uploading"}
                   />
-                  <label
-                    htmlFor="pack-file-input"
-                    className="inline-block bg-secondary text-white px-6 py-3 rounded-lg hover:bg-secondary/90 cursor-pointer font-medium transition-colors"
-                  >
-                    Choose File
-                  </label>
                 </div>
               </div>
             </div>
