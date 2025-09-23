@@ -31,15 +31,7 @@ export default function HostPage() {
   }
 
   return (
-    <div className="bg-background-muted p-4 relative">
-      {/* Parlour Logo - Top Right */}
-      <div className="absolute top-4 right-4">
-        <img
-          src="/assets/logos/the-parlour/the-parlour-p-gold.svg"
-          alt="The Parlour"
-          className="h-8 w-8 opacity-70"
-        />
-      </div>
+    <div className="bg-background-muted p-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">

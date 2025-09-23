@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useGameStore } from "@/lib/store";
 import { PackSchema } from "@/lib/schema";
+import Logo from "@/components/Logo";
 
 export default function AdminPage() {
   const {
@@ -124,17 +125,16 @@ export default function AdminPage() {
 
 
   return (
-    <div className="min-h-screen bg-background-light p-8 relative">
-      {/* Parlour Logo - Top Right */}
-      <div className="absolute top-4 right-4">
-        <img
-          src="/assets/logos/the-parlour/the-parlour-p-gold.svg"
-          alt="The Parlour"
-          className="h-8 w-8 opacity-70"
-        />
-      </div>
+    <div className="min-h-screen bg-background-light p-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-primary mb-8">Swatch It! Admin</h1>
+        <div className="flex items-center gap-4 mb-8">
+          <Logo
+            logo="swatch-it"
+            className="max-h-12"
+            alt="Swatch It! logo"
+          />
+          <h1 className="text-4xl font-bold text-primary">Swatch It! Admin</h1>
+        </div>
 
         {/* Game Pack Section */}
         <div className="bg-card rounded-lg shadow-md p-6 mb-8">
