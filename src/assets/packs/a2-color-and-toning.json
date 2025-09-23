@@ -1,6 +1,5 @@
 {
-  "packId": "advanced-color-correction",
-  "title": "A3 Color Correction",
+  "title": "A2 Color & Toning",
   "board": {
     "columns": 5,
     "rows": 5,
@@ -8,7 +7,7 @@
       {
         "id": "up1",
         "name": "Underlying Pigments",
-        "clues": [
+        "questions": [
           { "value": 100, "prompt": "What is the underlying pigment at a level 7?", "answer": "Orange", "type": "text" },
           { "value": 200, "prompt": "When lifting from level 4 to level 8, which underlying pigment must you control?", "answer": "Yellow-Orange", "type": "text" },
           { "value": 300, "prompt": "True or False: Underlying pigment becomes less warm as you lift higher.", "answer": "False", "type": "text" },
@@ -19,7 +18,7 @@
       {
         "id": "ff1",
         "name": "Formulation Fixes",
-        "clues": [
+        "questions": [
           { "value": 100, "prompt": "What is the complementary tone to neutralize orange?", "answer": "Blue", "type": "text" },
           { "value": 200, "prompt": "What is the best strategy when trying to darken overly ashy blonde without it going muddy?", "answer": "Add warmth or a gold base", "type": "text" },
           { "value": 300, "prompt": "You lifted a level 6 to an uneven level 8/9 with warmth remaining. What two-step process corrects this?", "answer": "Tone remaining warmth, then apply final formula or glaze", "type": "text" },
@@ -30,7 +29,7 @@
       {
         "id": "lm1",
         "name": "Lightening Mishaps",
-        "clues": [
+        "questions": [
           { "value": 100, "prompt": "Overlapping bleach can lead to what common issue?", "answer": "Breakage/porosity", "type": "text" },
           { "value": 200, "prompt": "True or False: Uneven lift can sometimes be corrected with a wet balayage or “soap cap.”", "answer": "True", "type": "text" },
           { "value": 300, "prompt": "A band of darker color remains mid-shaft after lifting. What’s the technique to even it out?", "answer": "Apply lightener only to the band for targeted lift", "type": "text" },
@@ -41,7 +40,7 @@
       {
         "id": "tt1",
         "name": "Toning Troubles",
-        "clues": [
+        "questions": [
           { "value": 100, "prompt": "What tone counteracts yellow?", "answer": "Violet", "type": "text" },
           { "value": 200, "prompt": "A toner came out too dark. What’s the quickest way to soften it without re-lightening?", "answer": "Clarifying shampoo or gentle color remover", "type": "text" },
           { "value": 300, "prompt": "A toner that looked perfect in the bowl but turned green on application—what went wrong?", "answer": "Lack of warmth in formula / porosity issue", "type": "text" },
@@ -52,7 +51,7 @@
       {
         "id": "rs1",
         "name": "Real-World Scenarios",
-        "clues": [
+        "questions": [
           { "value": 100, "prompt": "Your client’s ends are a level 10, mid-shafts a level 8, and roots a level 7. What’s your first priority?", "answer": "Even out the mid-shaft before toning all-over", "type": "text" },
           { "value": 200, "prompt": "A client used box black dye for years and now wants balayage. What’s your realistic first step?", "answer": "Perform a strand test and plan for gradual lightening over multiple sessions", "type": "text" },
           { "value": 300, "prompt": "After a color correction, the hair feels fragile. What at-home care do you recommend?", "answer": "Bond-building treatments, sulfate-free shampoo, and protein/moisture balance", "type": "text" },
