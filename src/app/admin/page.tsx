@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { useGameStore } from "@/lib/store";
 import { PackSchema } from "@/lib/schema";
+import { getPackSummary } from "@/lib/packUtils";
 import Logo from "@/components/Logo";
+import PackLibrary from "@/components/PackLibrary";
 
 export default function AdminPage() {
   const {
@@ -136,25 +138,36 @@ export default function AdminPage() {
           <h1 className="text-4xl font-bold text-primary">Swatch It! Admin</h1>
         </div>
 
-        {/* Game Pack Section */}
+        {/* Class Pack Panel */}
         <div className="bg-card rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-semibold mb-4 text-text-primary">Game Pack</h2>
+          <h2 className="text-2xl font-semibold mb-6 text-text-primary">Class Pack</h2>
 
-          {pack ? (
-            <div className="mb-4">
-              <p className="text-lg font-medium text-success">✓ Loaded: {pack.title}</p>
-              <p className="text-sm text-text-secondary">
-                {pack.board.categories.length} categories,
-                {pack.board.categories.reduce((acc, cat) => acc + cat.clues.length, 0)} clues total
-              </p>
-            </div>
-          ) : (
-            <p className="text-warning mb-4">No pack loaded</p>
-          )}
+          {/* Current Pack Status */}
+          <div className="mb-6 p-4 bg-background-muted rounded-lg border border-border">
+            <h3 className="text-lg font-semibold mb-2 text-text-primary">Current Pack</h3>
+            {pack ? (
+              <div>
+                <p className="text-lg font-medium text-success">✓ {pack.title}</p>
+                <p className="text-sm text-text-secondary">
+                  {getPackSummary(pack)}
+                </p>
+              </div>
+            ) : (
+              <p className="text-warning">No pack loaded</p>
+            )}
+          </div>
 
-          {/* File Upload Drop Zone */}
+          {/* Available Built-in Packs */}
+          <div className="mb-6">
+            <PackLibrary
+              currentPack={pack}
+              onPackSelect={setPack}
+            />
+          </div>
+
+          {/* Custom Pack Upload */}
           <div>
-            <h3 className="text-lg font-semibold mb-2 text-text-primary">Upload Pack File</h3>
+            <h4 className="text-md font-semibold mb-3 text-text-primary">Upload Custom Pack</h4>
             <div
               onDrop={handleDrop}
               onDragOver={handleDragOver}
