@@ -3,7 +3,7 @@
 import { useGameStore } from "@/lib/store";
 import BoardGrid from "@/components/BoardGrid";
 import QuestionModal from "@/components/QuestionModal";
-import Scoreboard from "@/components/Scoreboard";
+import HostScoreboard from "@/components/HostScoreboard";
 import Logo from "@/components/Logo";
 
 export default function HostPage() {
@@ -75,7 +75,7 @@ export default function HostPage() {
       {/* Scoreboard - Fixed above Footer */}
       <div className="fixed bottom-12 left-0 right-0 bg-card border-t border-border shadow-lg">
         <div className="max-w-7xl mx-auto p-4">
-          <Scoreboard showControls={true} />
+          <HostScoreboard showControls={true} />
         </div>
       </div>
 

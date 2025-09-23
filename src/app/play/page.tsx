@@ -4,7 +4,7 @@ import { useGameStore } from "@/lib/store";
 import { useSyncListener } from "@/lib/useSyncListener";
 import BoardGrid from "@/components/BoardGrid";
 import QuestionModal from "@/components/QuestionModal";
-import Scoreboard from "@/components/Scoreboard";
+import PlayScoreboard from "@/components/PlayScoreboard";
 import Logo from "@/components/Logo";
 
 export default function PlayPage() {
@@ -37,30 +37,31 @@ export default function PlayPage() {
   return (
     <div className="bg-background-light text-text-primary">
       {/* Header */}
-      <div className="bg-primary py-6">
-        <div className="max-w-7xl mx-auto px-4">
+      <div className="bg-primary py-4">
+        <div className="max-w-full mx-auto px-4">
           <div className="flex items-center justify-center gap-6">
             <Logo
               logo={pack.logo || "swatch-it"}
-              className="max-h-14"
+              className="max-h-12"
               alt="Swatch It! logo"
             />
-            <h1 className="text-5xl font-bold text-black">
+            <h1 className="text-4xl font-bold text-black">
               Swatch It! - {pack.title}
             </h1>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto p-6 pb-40">
-        {/* Game Board - Full Width */}
-        <BoardGrid />
-      </div>
+      {/* Main Content Area - Split Layout */}
+      <div className="flex flex-col lg:flex-row min-h-[80vh]">
+        {/* Game Board - Left Side (Primary) */}
+        <div className="flex-1 p-4 lg:pr-2">
+          <BoardGrid />
+        </div>
 
-      {/* Scoreboard - Fixed above Footer */}
-      <div className="fixed bottom-12 left-0 right-0 bg-card border-t border-border shadow-lg">
-        <div className="max-w-7xl mx-auto p-4">
-          <Scoreboard showControls={false} />
+        {/* Scoreboard - Right Side (Secondary) - Full Height */}
+        <div className="w-full lg:w-80 p-4 lg:pl-2 lg:border-l border-border bg-card/50 lg:bg-card/50 flex flex-col">
+          <PlayScoreboard />
         </div>
       </div>
 

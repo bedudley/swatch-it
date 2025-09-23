@@ -6,7 +6,7 @@ interface ScoreboardProps {
   showControls?: boolean;
 }
 
-export default function Scoreboard({ showControls = false }: ScoreboardProps) {
+export default function HostScoreboard({ showControls = false }: ScoreboardProps) {
   const { teams, updateTeamScore, undo } = useGameStore();
 
   if (teams.length === 0) {
@@ -18,26 +18,26 @@ export default function Scoreboard({ showControls = false }: ScoreboardProps) {
     );
   }
 
-  const sortedTeams = [...teams].sort((a, b) => b.score - a.score);
+  // Keep teams in original order for host view (showControls = true)
+  const displayTeams = showControls ? teams : [...teams].sort((a, b) => b.score - a.score);
 
   return (
     <div className="flex items-center justify-between gap-2 lg:gap-4">
-      {/* Title and Undo Button */}
-      <div className="flex items-center gap-2 lg:gap-4 flex-shrink-0">
-        <h2 className="text-lg lg:text-xl font-bold text-text-primary">Scoreboard</h2>
-        {showControls && (
+      {/* Undo Button */}
+      {showControls && (
+        <div className="flex items-center gap-2 lg:gap-4 flex-shrink-0">
           <button
             onClick={undo}
             className="bg-warning text-white px-4 py-2 rounded-lg font-medium hover:bg-warning/90 active:bg-warning/80 transition-colors"
           >
             Undo Last
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Teams in Horizontal Layout */}
-      <div className="flex items-center gap-4 lg:gap-6 flex-1 justify-center overflow-x-auto">
-        {sortedTeams.map((team, index) => (
+      {/* Teams in Flexible Layout */}
+      <div className="flex items-center gap-4 lg:gap-6 flex-1 justify-center flex-wrap">
+        {displayTeams.map((team, index) => (
           <div key={team.id} className="flex items-center gap-2 flex-shrink-0">
             {/* Minus Button (left side, only when showControls) */}
             {showControls && (
