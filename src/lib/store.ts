@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { GameState, Pack } from "./schema";
 import { getGameSync } from "./sync";
+import { getQuestion } from "./packUtils";
 
 interface GameStore extends GameState {
   // Pack management
@@ -14,8 +15,8 @@ interface GameStore extends GameState {
   updateTeamScore: (teamId: string, score: number) => void;
 
   // Game flow
-  openClue: (categoryId: string, value: number) => void;
-  closeClue: () => void;
+  openQuestion: (categoryId: string, value: number) => void;
+  closeQuestion: () => void;
   revealAnswer: () => void;
   markCorrect: (teamId: string) => void;
   markIncorrect: () => void;
@@ -29,7 +30,7 @@ interface GameStore extends GameState {
 
   // Game state
   resetGame: () => void;
-  isClueOpened: (categoryId: string, value: number) => boolean;
+  isQuestionOpened: (categoryId: string, value: number) => boolean;
 
   // Sync actions
   applySyncUpdate: (syncData: Partial<GameState>) => void;
@@ -41,7 +42,7 @@ const initialState: GameState = {
   opened: {},
   history: [],
   pack: null,
-  currentClue: null,
+  currentQuestion: null,
   showAnswer: false,
 };
 
@@ -64,7 +65,7 @@ export const useGameStore = create<GameStore>()(
         pack,
         opened: {},
         history: [],
-        currentClue: null,
+        currentQuestion: null,
         showAnswer: false,
       };
       set(newState);
@@ -117,20 +118,17 @@ export const useGameStore = create<GameStore>()(
       broadcastState({ teams: updatedTeams });
     },
 
-    openClue: (categoryId: string, value: number) => {
+    openQuestion: (categoryId: string, value: number) => {
       const state = get();
       if (!state.pack) return;
 
-      const category = state.pack.board.categories.find((cat) => cat.id === categoryId);
-      if (!category) return;
-
-      const clue = category.clues.find((c) => c.value === value);
-      if (!clue) return;
+      const question = getQuestion(state.pack, categoryId, value);
+      if (!question) return;
 
       const key = `${categoryId}:${value}`;
 
       const newState = {
-        currentClue: { categoryId, value, clue },
+        currentQuestion: { categoryId, value, question },
         showAnswer: false,
         opened: { ...state.opened, [key]: true },
         boardDisabled: true,
@@ -150,15 +148,15 @@ export const useGameStore = create<GameStore>()(
       }));
     },
 
-    closeClue: () => {
+    closeQuestion: () => {
       const state = get();
 
-      // If there's a current clue, check if it was scored
+      // If there's a current question, check if it was scored
       let updatedOpened = state.opened;
-      if (state.currentClue) {
-        const key = `${state.currentClue.categoryId}:${state.currentClue.value}`;
+      if (state.currentQuestion) {
+        const key = `${state.currentQuestion.categoryId}:${state.currentQuestion.value}`;
 
-        // Check if this clue was scored (has a scoring action in history)
+        // Check if this question was scored (has a scoring action in history)
         const wasScored = state.history.some(
           action => action.key === key && action.teamId && action.delta
         );
@@ -171,7 +169,7 @@ export const useGameStore = create<GameStore>()(
       }
 
       const newState = {
-        currentClue: null,
+        currentQuestion: null,
         showAnswer: false,
         boardDisabled: false,
         opened: updatedOpened,
@@ -188,9 +186,9 @@ export const useGameStore = create<GameStore>()(
 
     markCorrect: (teamId: string) => {
       const state = get();
-      if (!state.currentClue) return;
+      if (!state.currentQuestion) return;
 
-      const points = state.currentClue.value;
+      const points = state.currentQuestion.value;
 
       const updatedTeams = state.teams.map((team) =>
         team.id === teamId
@@ -205,7 +203,7 @@ export const useGameStore = create<GameStore>()(
 
       // Add scoring action to history
       const action = {
-        key: `${state.currentClue!.categoryId}:${state.currentClue!.value}`,
+        key: `${state.currentQuestion!.categoryId}:${state.currentQuestion!.value}`,
         teamId,
         delta: points,
         timestamp: Date.now(),
@@ -215,11 +213,11 @@ export const useGameStore = create<GameStore>()(
         history: [...state.history, action],
       }));
 
-      get().closeClue();
+      get().closeQuestion();
     },
 
     markIncorrect: () => {
-      get().closeClue();
+      get().closeQuestion();
     },
 
     setBoardDisabled: (disabled: boolean) => {
@@ -290,7 +288,7 @@ export const useGameStore = create<GameStore>()(
       broadcastState(newState);
     },
 
-    isClueOpened: (categoryId: string, value: number) => {
+    isQuestionOpened: (categoryId: string, value: number) => {
       const key = `${categoryId}:${value}`;
       return !!get().opened[key];
     },

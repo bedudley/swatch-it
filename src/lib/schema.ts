@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const ClueSchema = z.object({
+export const QuestionSchema = z.object({
   value: z.number().int().positive(),
   type: z.enum(["text", "multipleChoice", "image", "audio"]).default("text"),
   prompt: z.string().min(1),
@@ -17,11 +17,10 @@ export const ClueSchema = z.object({
 export const CategorySchema = z.object({
   id: z.string(),
   name: z.string(),
-  clues: z.array(ClueSchema).min(1)
+  questions: z.array(QuestionSchema).min(1)
 });
 
 export const PackSchema = z.object({
-  packId: z.string(),
   title: z.string(),
   logo: z.union([
     z.string().startsWith("data:image/"), // base64 data URL
@@ -39,9 +38,11 @@ export const PackSchema = z.object({
   }).optional()
 });
 
-export type Clue = z.infer<typeof ClueSchema>;
+export type Question = z.infer<typeof QuestionSchema>;
 export type Category = z.infer<typeof CategorySchema>;
-export type Pack = z.infer<typeof PackSchema>;
+export type Pack = z.infer<typeof PackSchema> & {
+  id?: string; // Generated from filename or custom identifier
+};
 
 export type Team = {
   id: string;
@@ -62,10 +63,10 @@ export type GameState = {
   opened: Record<string, boolean>; // key = `${catId}:${value}`
   history: GameAction[];
   pack: Pack | null;
-  currentClue: {
+  currentQuestion: {
     categoryId: string;
     value: number;
-    clue: Clue;
+    question: Question;
   } | null;
   showAnswer: boolean;
 };

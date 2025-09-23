@@ -1,15 +1,18 @@
 "use client";
 
 import { useGameStore } from "@/lib/store";
+import { validatePackStructure } from "@/lib/packUtils";
 import Tile from "./Tile";
 
 export default function BoardGrid() {
   const { pack } = useGameStore();
 
-  if (!pack) {
+  if (!pack || !validatePackStructure(pack)) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-gray-500 text-lg">No game pack loaded</p>
+        <p className="text-gray-500 text-lg">
+          {!pack ? "No game pack loaded" : "Invalid pack structure"}
+        </p>
       </div>
     );
   }
@@ -18,7 +21,7 @@ export default function BoardGrid() {
 
   // Calculate grid dimensions
   const numCategories = categories.length;
-  const maxClues = Math.max(...categories.map(cat => cat.clues.length));
+  const maxQuestions = Math.max(...categories.map(cat => cat.questions.length));
 
   return (
     <div className="bg-background-muted p-6 rounded-lg border border-border overflow-x-auto">
@@ -42,15 +45,15 @@ export default function BoardGrid() {
           </div>
         ))}
 
-        {/* Clue tiles - properly aligned by row */}
-        {Array.from({ length: maxClues }, (_, rowIndex) =>
+        {/* Question tiles - properly aligned by row */}
+        {Array.from({ length: maxQuestions }, (_, rowIndex) =>
           categories.map((category) => {
-            const clue = category.clues[rowIndex];
-            return clue ? (
+            const question = category.questions[rowIndex];
+            return question ? (
               <Tile
-                key={`${category.id}-${clue.value}`}
+                key={`${category.id}-${question.value}`}
                 categoryId={category.id}
-                clue={clue}
+                question={question}
               />
             ) : (
               <div

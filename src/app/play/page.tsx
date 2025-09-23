@@ -3,21 +3,21 @@
 import { useGameStore } from "@/lib/store";
 import { useSyncListener } from "@/lib/useSyncListener";
 import BoardGrid from "@/components/BoardGrid";
-import ClueModal from "@/components/ClueModal";
+import QuestionModal from "@/components/QuestionModal";
 import Scoreboard from "@/components/Scoreboard";
 import Logo from "@/components/Logo";
 
 export default function PlayPage() {
   const pack = useGameStore((state) => state.pack);
   const teams = useGameStore((state) => state.teams);
-  const currentClue = useGameStore((state) => state.currentClue);
+  const currentQuestion = useGameStore((state) => state.currentQuestion);
   const showAnswer = useGameStore((state) => state.showAnswer);
 
   // Set up sync listener to receive updates from host
   useSyncListener();
 
   // Debug: Log state changes
-  console.log('Play page render - currentClue:', currentClue, 'showAnswer:', showAnswer);
+  console.log('Play page render - currentQuestion:', currentQuestion, 'showAnswer:', showAnswer);
 
   if (!pack || teams.length === 0) {
     return (
@@ -64,8 +64,8 @@ export default function PlayPage() {
         </div>
       </div>
 
-      {/* Clue Modal */}
-      <ClueModal showControls={false} />
+      {/* Question Modal */}
+      <QuestionModal showControls={false} />
     </div>
   );
 }

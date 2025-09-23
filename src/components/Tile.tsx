@@ -1,21 +1,21 @@
 "use client";
 
 import { useGameStore } from "@/lib/store";
-import { Clue } from "@/lib/schema";
+import { Question } from "@/lib/schema";
 
 interface TileProps {
   categoryId: string;
-  clue: Clue;
+  question: Question;
 }
 
-export default function Tile({ categoryId, clue }: TileProps) {
-  const { openClue, isClueOpened, boardDisabled } = useGameStore();
+export default function Tile({ categoryId, question }: TileProps) {
+  const { openQuestion, isQuestionOpened, boardDisabled } = useGameStore();
 
-  const isOpened = isClueOpened(categoryId, clue.value);
+  const isOpened = isQuestionOpened(categoryId, question.value);
 
   const handleClick = () => {
     if (!isOpened && !boardDisabled) {
-      openClue(categoryId, clue.value);
+      openQuestion(categoryId, question.value);
     }
   };
 
@@ -34,7 +34,7 @@ export default function Tile({ categoryId, clue }: TileProps) {
       `}
       style={{ minHeight: "120px" }}
     >
-      {isOpened ? "" : `$${clue.value}`}
+      {isOpened ? "" : `$${question.value}`}
     </button>
   );
 }

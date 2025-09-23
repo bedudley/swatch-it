@@ -2,24 +2,24 @@
 
 import { useGameStore } from "@/lib/store";
 
-interface ClueModalProps {
+interface QuestionModalProps {
   showControls?: boolean;
 }
 
-export default function ClueModal({ showControls = false }: ClueModalProps) {
+export default function QuestionModal({ showControls = false }: QuestionModalProps) {
   const {
-    currentClue,
+    currentQuestion,
     showAnswer,
     teams,
-    closeClue,
+    closeQuestion,
     revealAnswer,
     markCorrect,
     markIncorrect,
   } = useGameStore();
 
-  if (!currentClue) return null;
+  if (!currentQuestion) return null;
 
-  const { clue } = currentClue;
+  const { question } = currentQuestion;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
@@ -28,14 +28,14 @@ export default function ClueModal({ showControls = false }: ClueModalProps) {
           {/* Header */}
           <div className="text-center mb-12">
             <div className="text-warning text-6xl sm:text-7xl lg:text-8xl font-bold mb-6 drop-shadow-lg">
-              ${clue.value}
+              ${question.value}
             </div>
           </div>
 
-          {/* Clue Content */}
+          {/* Question Content */}
           <div className="text-center mb-12">
             <div className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-text-primary mb-8 leading-relaxed px-4">
-              {clue.prompt}
+              {question.prompt}
             </div>
 
             {showAnswer && (
@@ -44,18 +44,18 @@ export default function ClueModal({ showControls = false }: ClueModalProps) {
                   Answer:
                 </div>
                 <div className="text-2xl sm:text-3xl lg:text-4xl text-text-primary font-semibold">
-                  {clue.answer}
+                  {question.answer}
                 </div>
               </div>
             )}
 
-            {clue.notes && showControls && showAnswer && (
+            {question.notes && showControls && showAnswer && (
               <div className="mt-4 p-4 bg-info/10 rounded-lg border border-info">
                 <div className="text-sm font-semibold text-info mb-1">
                   Host Notes:
                 </div>
                 <div className="text-sm text-text-secondary">
-                  {clue.notes}
+                  {question.notes}
                 </div>
               </div>
             )}
@@ -106,7 +106,7 @@ export default function ClueModal({ showControls = false }: ClueModalProps) {
 
               <div className="text-center pt-8 border-t-2 border-border">
                 <button
-                  onClick={closeClue}
+                  onClick={closeQuestion}
                   className="bg-text-secondary text-white px-10 py-4 text-xl rounded-xl hover:bg-text-secondary/90 active:bg-text-secondary/80 font-medium transition-colors shadow-lg"
                 >
                   Close

@@ -2,7 +2,7 @@
 
 import { useGameStore } from "@/lib/store";
 import BoardGrid from "@/components/BoardGrid";
-import ClueModal from "@/components/ClueModal";
+import QuestionModal from "@/components/QuestionModal";
 import Scoreboard from "@/components/Scoreboard";
 import Logo from "@/components/Logo";
 
@@ -79,8 +79,8 @@ export default function HostPage() {
         </div>
       </div>
 
-      {/* Clue Modal */}
-      <ClueModal showControls={true} />
+      {/* Question Modal */}
+      <QuestionModal showControls={true} />
     </div>
   );
 }
