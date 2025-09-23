@@ -12,7 +12,7 @@ export default function Logo({ logo, className = "", alt = "Logo" }: LogoProps) 
   // Determine the logo source
   const getLogoSrc = (): string => {
     if (!logo) {
-      return "/assets/logos/default.png";
+      return "/assets/logos/swatch-it.png";
     }
 
     // Base64 data URL - use directly
@@ -21,8 +21,8 @@ export default function Logo({ logo, className = "", alt = "Logo" }: LogoProps) 
     }
 
     // Built-in logo names
-    if (logo.startsWith("default")) {
-      return `/assets/logos/${logo}.png`;
+    if (logo === "default" || logo === "swatch-it") {
+      return `/assets/logos/swatch-it.png`;
     }
 
     // External URL - use directly
@@ -30,8 +30,8 @@ export default function Logo({ logo, className = "", alt = "Logo" }: LogoProps) 
       return logo;
     }
 
-    // Fallback to default
-    return "/assets/logos/default.png";
+    // Fallback to swatch-it
+    return "/assets/logos/swatch-it.png";
   };
 
   const logoSrc = getLogoSrc();
@@ -60,10 +60,10 @@ export default function Logo({ logo, className = "", alt = "Logo" }: LogoProps) 
       className={`max-h-16 w-auto object-contain ${className}`}
       unoptimized={logoSrc.startsWith("http")}
       onError={(e) => {
-        // Fallback to default logo if loading fails
+        // Fallback to swatch-it logo if loading fails
         const target = e.target as HTMLImageElement;
-        if (target.src !== "/assets/logos/default.png") {
-          target.src = "/assets/logos/default.png";
+        if (target.src !== "/assets/logos/swatch-it.png") {
+          target.src = "/assets/logos/swatch-it.png";
         }
       }}
     />

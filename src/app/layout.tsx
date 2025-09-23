@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Nunito, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import Footer from "@/components/Footer";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -28,7 +29,12 @@ export default function RootLayout({
       <body
         className={`${nunito.variable} ${jetbrainsMono.variable} font-sans antialiased`}
       >
-        {children}
+        <div className="min-h-screen flex flex-col">
+          <div className="flex-1">
+            {children}
+          </div>
+          <Footer />
+        </div>
       </body>
     </html>
   );

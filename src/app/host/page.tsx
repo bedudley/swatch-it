@@ -31,13 +31,21 @@ export default function HostPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background-muted p-4">
+    <div className="bg-background-muted p-4 relative">
+      {/* Parlour Logo - Top Right */}
+      <div className="absolute top-4 right-4">
+        <img
+          src="/assets/logos/the-parlour/the-parlour-p-gold.svg"
+          alt="The Parlour"
+          className="h-8 w-8 opacity-70"
+        />
+      </div>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-4">
             <Logo
-              logo={pack.logo || "default"}
+              logo={pack.logo || "swatch-it"}
               className="max-h-12"
               alt={`${pack.title} logo`}
             />
@@ -67,13 +75,13 @@ export default function HostPage() {
         </div>
 
         {/* Game Board - Full Width */}
-        <div className="pb-32">
+        <div className="pb-40">
           <BoardGrid />
         </div>
       </div>
 
-      {/* Scoreboard - Fixed at Bottom */}
-      <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border shadow-lg">
+      {/* Scoreboard - Fixed above Footer */}
+      <div className="fixed bottom-12 left-0 right-0 bg-card border-t border-border shadow-lg">
         <div className="max-w-7xl mx-auto p-4">
           <Scoreboard showControls={true} />
         </div>

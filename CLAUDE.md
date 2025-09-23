@@ -29,7 +29,7 @@
 
 ## 3) Runtime Content Model (JSON Packs)
 
-A **Question Pack** (aka **Game Pack**) is a single JSON file. Users can import it at runtime, or place it in `/public/packs`. The app exposes **Import Pack** and **Export Current Game** buttons.
+A **Question Pack** (aka **Game Pack**) is a single JSON file. Users import them at runtime via the drag-and-drop upload interface. Sample packs are stored in `/src/assets/packs`. The app exposes **Import Pack** and **Export Current Game** buttons.
 
 ### 3.1 JSON Schema (conceptual)
 
@@ -198,8 +198,9 @@ A **Question Pack** (aka **Game Pack**) is a single JSON file. Users can import 
     store.ts                     # Zustand store (teams, scores, game state)
     persist.ts                   # load/save from localStorage
     pack.ts                      # helpers: validate, normalize, shuffle
-  /public/packs
-    color-style-sampler.json
+  /src/assets/packs
+    advanced-color-correction.json
+  /public/assets/logos           # Swatch It! and The Parlour logos
   /styles
     tailwind.css
   package.json

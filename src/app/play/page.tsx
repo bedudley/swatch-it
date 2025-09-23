@@ -35,13 +35,13 @@ export default function PlayPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background-light text-text-primary">
+    <div className="bg-background-light text-text-primary">
       {/* Header */}
       <div className="bg-primary py-6">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-center gap-6">
             <Logo
-              logo={pack.logo || "default"}
+              logo={pack.logo || "swatch-it"}
               className="max-h-14"
               alt="Swatch It! logo"
             />
@@ -52,13 +52,13 @@ export default function PlayPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto p-6 pb-32">
+      <div className="max-w-7xl mx-auto p-6 pb-40">
         {/* Game Board - Full Width */}
         <BoardGrid />
       </div>
 
-      {/* Scoreboard - Fixed at Bottom */}
-      <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border shadow-lg">
+      {/* Scoreboard - Fixed above Footer */}
+      <div className="fixed bottom-12 left-0 right-0 bg-card border-t border-border shadow-lg">
         <div className="max-w-7xl mx-auto p-4">
           <Scoreboard showControls={false} />
         </div>
