@@ -12,7 +12,7 @@ interface PackLibraryProps {
 
 export default function PackLibrary({ currentPack, onPackSelect }: PackLibraryProps) {
   const [availablePacks, setAvailablePacks] = useState<PackMetadata[]>([]);
-  const [loading, setLoading] = useState(false); // Start with false to skip loading state
+  const [loading] = useState(false); // Start with false to skip loading state
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

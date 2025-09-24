@@ -16,7 +16,7 @@ export default function PlayScoreboard() {
 
   const sortedTeams = [...teams].sort((a, b) => b.score - a.score);
   const topScore = sortedTeams.length > 0 ? sortedTeams[0].score : 0;
-  const isLeader = (team: any) => team.score > 0 && team.score === topScore;
+  const isLeader = (team: { score: number }) => team.score > 0 && team.score === topScore;
 
   return (
     <div className="space-y-6">
