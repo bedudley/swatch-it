@@ -10,7 +10,7 @@ export interface PackMetadata {
 }
 
 // Static imports for reliable Next.js compatibility
-import pack1Data from '@/assets/packs/a2-color-and-toning.json';
+import pack1Data from '@/assets/packs/a2-bleach-and-tone.json';
 import pack2Data from '@/assets/packs/a3-color-correction.json';
 
 /**
@@ -21,7 +21,7 @@ export function loadBuiltInPacks(): PackMetadata[] {
 
   // Built-in packs with their filenames
   const builtInPacks = [
-    { data: pack1Data, filename: 'a2-color-and-toning.json' },
+    { data: pack1Data, filename: 'a2-bleach-and-tone.json' },
     { data: pack2Data, filename: 'a3-color-correction.json' }
   ];
 

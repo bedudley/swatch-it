@@ -1,0 +1,68 @@
+{
+  "title": "A2 Bleach & Tone",
+  "board": {
+    "columns": 5,
+    "rows": 5,
+    "categories": [
+      {
+        "id": "btb1",
+        "name": "Bleach & Tone Basics",
+        "questions": [
+          { "value": 100, "prompt": "What is the underlying pigment at a level 9/10 blonde?", "answer": "Pale yellow", "type": "text" },
+          { "value": 200, "prompt": "Why is using 20 volume developer safer for on-scalp bleach than 30 or 40?", "answer": "Lower risk of scalp irritation and swelling, more controlled lift", "type": "text" },
+          { "value": 300, "prompt": "What additive can be mixed with bleach to maintain integrity during a high lift?", "answer": "Bond builders (e.g., K18, Olaplex)", "type": "text" },
+          { "value": 400, "prompt": "Explain why you should apply bleach to mid-lengths and ends before roots on virgin hair.", "answer": "Roots process faster due to scalp heat; applying them last ensures even lift", "type": "text" },
+          { "value": 500, "prompt": "Why must you always tone after bleaching, even if the blonde looks bright?", "answer": "To neutralize underlying warmth and refine tone for longevity and shine", "type": "text" }
+        ]
+      },
+      {
+        "id": "vct1",
+        "name": "Vivid Color Theory",
+        "questions": [
+          { "value": 100, "prompt": "Which primary color combination makes purple?", "answer": "Red + Blue", "type": "text" },
+          { "value": 200, "prompt": "Why does direct dye fade faster on porous hair?", "answer": "Porous hair can’t lock in pigment, causing quicker washout", "type": "text" },
+          { "value": 300, "prompt": "What background level do you generally need for neon yellow or pastel vivid to show true?", "answer": "Level 9–10", "type": "text" },
+          { "value": 400, "prompt": "What’s the difference between oxidative dyes and direct dyes?", "answer": "Oxidative use developer and penetrate cortex; direct dyes stain the cuticle layer", "type": "text" },
+          { "value": 500, "prompt": "How can you create a custom smoky teal if you only have primary vivid colors?", "answer": "Mix blue + green + a touch of red or purple to mute intensity", "type": "text" }
+        ]
+      },
+      {
+        "id": "at1",
+        "name": "Application & Technique",
+        "questions": [
+          { "value": 100, "prompt": "What’s a quick trick to avoid overlapping bleach on already-processed ends?", "answer": "Use conditioner, bond builder, or protective barrier on ends", "type": "text" },
+          { "value": 200, "prompt": "For vivids, why is pre-toning sometimes necessary?", "answer": "To create a neutral base that shows the true vivid shade", "type": "text" },
+          { "value": 300, "prompt": "What’s the recommended processing time range for most on-scalp bleach applications?", "answer": "35–50 minutes (depending on product and lift)", "type": "text" },
+          { "value": 400, "prompt": "Why is saturating sections crucial when applying vivid color?", "answer": "Uneven saturation leads to patchiness or dull spots", "type": "text" },
+          { "value": 500, "prompt": "Name one creative placement technique to add dimension to a solid vivid.", "answer": "Negative space, paneling, peek-a-boo, or color blocking", "type": "text" }
+        ]
+      },
+      {
+        "id": "tc1",
+        "name": "Troubleshooting & Corrections",
+        "questions": [
+          { "value": 100, "prompt": "What’s your first step if a vivid color turns out patchy?", "answer": "Reapply to missed areas or use a color melt to blend", "type": "text" },
+          { "value": 200, "prompt": "A bleach & tone resulted in banding near the roots—what likely caused it?", "answer": "Applying bleach to roots too soon or uneven application", "type": "text" },
+          { "value": 300, "prompt": "A pastel vivid faded to a muddy tone. What caused this?", "answer": "Applied over a base that wasn’t lifted/lightened enough", "type": "text" },
+          { "value": 400, "prompt": "How can you safely remove stubborn direct dye without damaging hair?", "answer": "Use a direct dye remover or gentle bleach wash with bond protection", "type": "text" },
+          { "value": 500, "prompt": "A vivid red guest wants to shift to teal. What’s your first step?", "answer": "Remove or neutralize red pigment first (fading or color remover), then pre-lighten to the correct base", "type": "text" }
+        ]
+      },
+      {
+        "id": "mcc1",
+        "name": "Maintenance & Client Care",
+        "questions": [
+          { "value": 100, "prompt": "What water temperature is best for washing vivids?", "answer": "Cool water", "type": "text" },
+          { "value": 200, "prompt": "Why should clients avoid sulfates after vivid color?", "answer": "Sulfates strip pigment and cause faster fading", "type": "text" },
+          { "value": 300, "prompt": "Name two at-home care tips for prolonging bleach & tone results.", "answer": "UV/heat protection, purple shampoo, gentle cleansing, conditioning treatments", "type": "text" },
+          { "value": 400, "prompt": "What’s an in-salon service you can offer to refresh faded vivids between major sessions?", "answer": "Glazing, color wash, or vivid topcoat", "type": "text" },
+          { "value": 500, "prompt": "How often should most vivid clients return for a refresh to maintain vibrancy?", "answer": "Every 4–6 weeks", "type": "text" }
+        ]
+      }
+    ]
+  },
+  "finalRound": {
+    "prompt": "Outline your step-by-step strategy for creating a seamless, long-lasting pastel pink vivid on a client with level 7 orange-blonde hair that has slightly porous ends.",
+    "answer": "1) Consult & Prep: Strand test; discuss maintenance. 2) Lift: Pre-lighten to level 9–10 while protecting ends with bond builders. 3) Even Canvas: Use a gentle filler or pre-tone to cancel yellow for a neutral base. 4) Apply Vivid: Saturate sections evenly; process fully. 5) Rinse & Care: Rinse with cool water, condition, and seal cuticle. 6) Aftercare Advice: Recommend sulfate-free shampoo, UV protection, and 4–6 week refreshes."
+  }
+}
