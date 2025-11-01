@@ -36,6 +36,9 @@ interface GameStore extends GameState {
   // Multi-device mode
   setMultiDeviceMode: (mode: MultiDeviceMode, roomId: string | null) => void;
 
+  // Mobile navigation
+  setSelectedCategory: (categoryId: string | null) => void;
+
   // Sync actions
   applySyncUpdate: (syncData: Partial<GameState>) => void;
 }
@@ -50,6 +53,7 @@ const initialState: GameState = {
   showAnswer: false,
   multiDeviceMode: 'disabled',
   hostRoomId: null,
+  selectedCategoryId: null,
 };
 
 // Initialize sync
@@ -346,6 +350,11 @@ export const useGameStore = create<GameStore>()(
 
       // Don't broadcast this state change (it's peer-specific)
       // Each device manages its own connection state
+    },
+
+    setSelectedCategory: (categoryId: string | null) => {
+      set({ selectedCategoryId: categoryId });
+      // Don't broadcast - this is local navigation state
     },
 
     applySyncUpdate: (syncData: Partial<GameState>) => {

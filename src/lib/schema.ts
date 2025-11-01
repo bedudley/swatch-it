@@ -74,4 +74,6 @@ export type GameState = {
   // Multi-device support
   multiDeviceMode: MultiDeviceMode;
   hostRoomId: string | null; // Peer ID when in host or client mode
+  // Mobile navigation
+  selectedCategoryId: string | null; // For mobile drill-down view
 };

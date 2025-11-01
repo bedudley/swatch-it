@@ -7,15 +7,19 @@ import HostScoreboard from "@/components/HostScoreboard";
 import Logo from "@/components/Logo";
 import ConnectionStatus from "@/components/ConnectionStatus";
 import ReconnectionModal from "@/components/ReconnectionModal";
+import MobileCategoryList from "@/components/MobileCategoryList";
+import MobileCategoryDetail from "@/components/MobileCategoryDetail";
 import { useSyncListener } from "@/lib/useSyncListener";
 import { usePeerSyncListener } from "@/lib/usePeerSync";
+import { useIsMobile } from "@/lib/useMediaQuery";
 
 export default function HostPage() {
   // Set up sync listeners for both same-device and cross-device sync
   useSyncListener();
   const { showReconnectModal, setShowReconnectModal } = usePeerSyncListener();
 
-  const { pack, teams } = useGameStore();
+  const { pack, teams, selectedCategoryId } = useGameStore();
+  const isMobile = useIsMobile();
 
   if (!pack || teams.length === 0) {
     return (
@@ -44,42 +48,54 @@ export default function HostPage() {
       <ConnectionStatus />
 
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-4">
-            <Logo
-              logo={pack.logo || "swatch-it"}
-              className="max-h-12"
-              alt={`${pack.title} logo`}
-            />
-            <div>
-              <h1 className="text-3xl font-bold text-primary">
-                Swatch It! - {pack.title}
-              </h1>
-              <p className="text-text-secondary">Host View</p>
+        {/* Header - Hide on mobile to save space */}
+        {!isMobile && (
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex items-center gap-4">
+              <Logo
+                logo={pack.logo || "swatch-it"}
+                className="max-h-12"
+                alt={`${pack.title} logo`}
+              />
+              <div>
+                <h1 className="text-3xl font-bold text-primary">
+                  Swatch It! - {pack.title}
+                </h1>
+                <p className="text-text-secondary">Host View</p>
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <a
+                href="/play"
+                className="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Open Display View
+              </a>
+              <a
+                href="/admin"
+                className="bg-text-secondary text-white px-4 py-2 rounded hover:bg-text-secondary/90"
+              >
+                Back to Admin
+              </a>
             </div>
           </div>
-          <div className="flex gap-4">
-            <a
-              href="/play"
-              className="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Open Display View
-            </a>
-            <a
-              href="/admin"
-              className="bg-text-secondary text-white px-4 py-2 rounded hover:bg-text-secondary/90"
-            >
-              Back to Admin
-            </a>
-          </div>
-        </div>
+        )}
 
-        {/* Game Board - Full Width */}
+        {/* Game Board - Responsive */}
         <div className="pb-40">
-          <BoardGrid />
+          {isMobile ? (
+            // Mobile view: Category list or detail
+            selectedCategoryId ? (
+              <MobileCategoryDetail />
+            ) : (
+              <MobileCategoryList />
+            )
+          ) : (
+            // Desktop view: Full board grid
+            <BoardGrid />
+          )}
         </div>
       </div>
 
