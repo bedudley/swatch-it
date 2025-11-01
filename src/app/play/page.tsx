@@ -2,10 +2,12 @@
 
 import { useGameStore } from "@/lib/store";
 import { useSyncListener } from "@/lib/useSyncListener";
+import { usePeerSyncListener } from "@/lib/usePeerSync";
 import BoardGrid from "@/components/BoardGrid";
 import QuestionModal from "@/components/QuestionModal";
 import PlayScoreboard from "@/components/PlayScoreboard";
 import Logo from "@/components/Logo";
+import ConnectionStatus from "@/components/ConnectionStatus";
 
 export default function PlayPage() {
   const pack = useGameStore((state) => state.pack);
@@ -13,8 +15,9 @@ export default function PlayPage() {
   const currentQuestion = useGameStore((state) => state.currentQuestion);
   const showAnswer = useGameStore((state) => state.showAnswer);
 
-  // Set up sync listener to receive updates from host
+  // Set up sync listeners for both same-device and cross-device sync
   useSyncListener();
+  usePeerSyncListener();
 
   // Debug: Log state changes
   console.log('Play page render - currentQuestion:', currentQuestion, 'showAnswer:', showAnswer);
@@ -36,6 +39,9 @@ export default function PlayPage() {
 
   return (
     <div className="bg-background-light text-text-primary">
+      {/* Connection Status Indicator */}
+      <ConnectionStatus />
+
       {/* Header */}
       <div className="bg-primary py-4">
         <div className="max-w-full mx-auto px-4">

@@ -57,6 +57,8 @@ export type GameAction = {
   timestamp: number;
 };
 
+export type MultiDeviceMode = 'disabled' | 'host' | 'client';
+
 export type GameState = {
   teams: Team[];
   boardDisabled: boolean;
@@ -69,4 +71,7 @@ export type GameState = {
     question: Question;
   } | null;
   showAnswer: boolean;
+  // Multi-device support
+  multiDeviceMode: MultiDeviceMode;
+  hostRoomId: string | null; // Peer ID when in host or client mode
 };

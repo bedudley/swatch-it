@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { GameState, Pack } from "./schema";
+import { GameState, Pack, MultiDeviceMode } from "./schema";
 import { getGameSync } from "./sync";
+import { getPeerSync } from "./peerSync";
 import { getQuestion } from "./packUtils";
 
 interface GameStore extends GameState {
@@ -32,6 +33,9 @@ interface GameStore extends GameState {
   resetGame: () => void;
   isQuestionOpened: (categoryId: string, value: number) => boolean;
 
+  // Multi-device mode
+  setMultiDeviceMode: (mode: MultiDeviceMode, roomId: string | null) => void;
+
   // Sync actions
   applySyncUpdate: (syncData: Partial<GameState>) => void;
 }
@@ -44,15 +48,55 @@ const initialState: GameState = {
   pack: null,
   currentQuestion: null,
   showAnswer: false,
+  multiDeviceMode: 'disabled',
+  hostRoomId: null,
 };
 
 // Initialize sync
 const gameSync = getGameSync();
+const peerSync = getPeerSync();
 
-// Helper to broadcast state changes
+// Set up callback for initial state sync when new clients connect
+peerSync.setOnNewClientConnected((conn) => {
+  console.log('[Store] New client connected, sending initial game state...');
+
+  // Get the current full game state from the store
+  const currentState = useGameStore.getState();
+
+  // Extract the game state (exclude methods)
+  const gameState: Partial<GameState> = {
+    teams: currentState.teams,
+    boardDisabled: currentState.boardDisabled,
+    opened: currentState.opened,
+    history: currentState.history,
+    pack: currentState.pack,
+    currentQuestion: currentState.currentQuestion,
+    showAnswer: currentState.showAnswer,
+    multiDeviceMode: currentState.multiDeviceMode,
+    hostRoomId: currentState.hostRoomId,
+  };
+
+  console.log('[Store] Sending game state to new client:', {
+    teamsCount: gameState.teams?.length,
+    packTitle: gameState.pack?.title,
+    openedQuestionsCount: Object.keys(gameState.opened || {}).length,
+  });
+
+  // Use the sendInitialStateToClient method
+  peerSync.sendInitialStateToClient(conn, gameState);
+});
+
+// Helper to broadcast state changes (both BroadcastChannel and PeerJS)
 const broadcastState = (partialState: Partial<GameState>) => {
   console.log('Broadcasting state:', partialState); // Debug log
+
+  // Broadcast via BroadcastChannel (same-device tabs)
   gameSync.broadcast(partialState);
+
+  // Broadcast via PeerJS (cross-device)
+  if (peerSync.isActive) {
+    peerSync.broadcastState(partialState);
+  }
 };
 
 export const useGameStore = create<GameStore>()(
@@ -293,6 +337,17 @@ export const useGameStore = create<GameStore>()(
       return !!get().opened[key];
     },
 
+    setMultiDeviceMode: (mode: MultiDeviceMode, roomId: string | null) => {
+      const newState = {
+        multiDeviceMode: mode,
+        hostRoomId: roomId,
+      };
+      set(newState);
+
+      // Don't broadcast this state change (it's peer-specific)
+      // Each device manages its own connection state
+    },
+
     applySyncUpdate: (syncData: Partial<GameState>) => {
       console.log('Applying sync update:', syncData); // Debug log
       set((state) => ({
@@ -303,11 +358,42 @@ export const useGameStore = create<GameStore>()(
   }),
   {
     name: 'swatch-it-storage',
-    partialize: (state) => ({
-      teams: state.teams,
-      pack: state.pack,
-      opened: state.opened,
-    }),
+    partialize: (state) => {
+      // Don't persist anything when in client mode - host will send state
+      if (state.multiDeviceMode === 'client') {
+        return {};
+      }
+      // Normal persistence for host and disabled modes
+      return {
+        teams: state.teams,
+        pack: state.pack,
+        opened: state.opened,
+      };
+    },
+    // Custom storage that skips loading when joining as client
+    storage: {
+      getItem: (name) => {
+        // Check if we're joining as a client (coming from /join with room param)
+        if (typeof window !== 'undefined') {
+          const urlParams = new URLSearchParams(window.location.search);
+          const isJoiningAsClient = urlParams.get('room') !== null;
+
+          if (isJoiningAsClient) {
+            console.log('[Store] Client mode detected - skipping localStorage load');
+            return null; // Return null to use initial state instead
+          }
+        }
+
+        const item = localStorage.getItem(name);
+        return item ? JSON.parse(item) : null;
+      },
+      setItem: (name, value) => {
+        localStorage.setItem(name, JSON.stringify(value));
+      },
+      removeItem: (name) => {
+        localStorage.removeItem(name);
+      },
+    },
   }
 ));
 

@@ -1,13 +1,23 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useGameStore } from "@/lib/store";
 import { PackSchema } from "@/lib/schema";
 import { getPackSummary } from "@/lib/packUtils";
+import { getPeerSync } from "@/lib/peerSync";
+import { useSyncListener } from "@/lib/useSyncListener";
+import { usePeerSyncListener } from "@/lib/usePeerSync";
 import Logo from "@/components/Logo";
 import PackLibrary from "@/components/PackLibrary";
+import MultiDeviceSetup from "@/components/MultiDeviceSetup";
 
 export default function AdminPage() {
+  // Set up sync listeners for both same-device and cross-device sync
+  useSyncListener();
+  usePeerSyncListener();
+
+  const router = useRouter();
   const {
     teams,
     pack,
@@ -28,6 +38,41 @@ export default function AdminPage() {
       addTeam(newTeamName.trim());
       setNewTeamName("");
     }
+  };
+
+  const handleNavigate = async (path: string) => {
+    const peerSync = getPeerSync();
+
+    // If we're the host, ensure state is synced before navigation
+    if (peerSync.isActive && peerSync.getStatus().role === 'host') {
+      console.log('[Admin] Broadcasting current state before navigation...');
+
+      // Get current game state
+      const currentState = useGameStore.getState();
+      const gameState = {
+        teams: currentState.teams,
+        boardDisabled: currentState.boardDisabled,
+        opened: currentState.opened,
+        history: currentState.history,
+        pack: currentState.pack,
+        currentQuestion: currentState.currentQuestion,
+        showAnswer: currentState.showAnswer,
+        multiDeviceMode: currentState.multiDeviceMode,
+        hostRoomId: currentState.hostRoomId,
+      };
+
+      // Broadcast state first
+      peerSync.broadcastState(gameState);
+
+      // Small delay to ensure state is sent before navigation
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Then send navigation
+      peerSync.sendNavigation(path);
+    }
+
+    // Navigate locally
+    router.push(path);
   };
 
   const handleFileUpload = (file: File) => {
@@ -264,6 +309,9 @@ export default function AdminPage() {
           )}
         </div>
 
+        {/* Multi-Device Setup */}
+        <MultiDeviceSetup />
+
         {/* Teams Section */}
         <div className="bg-card rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-2xl font-semibold mb-4 text-text-primary">Teams</h2>
@@ -317,27 +365,29 @@ export default function AdminPage() {
           <h2 className="text-2xl font-semibold mb-4 text-text-primary">Game Controls</h2>
 
           <div className="flex flex-col sm:flex-row gap-4">
-            <a
-              href="/host"
-              className={`inline-block px-8 py-4 text-lg rounded-lg text-white font-medium text-center min-w-[200px] transition-colors ${
+            <button
+              onClick={() => handleNavigate("/host")}
+              disabled={!pack || teams.length === 0}
+              className={`px-8 py-4 text-lg rounded-lg text-white font-medium text-center min-w-[200px] transition-colors ${
                 pack && teams.length > 0
                   ? "bg-success hover:bg-success/90 active:bg-success/80"
                   : "bg-gray-400 cursor-not-allowed"
               }`}
             >
               Start Game (Host View)
-            </a>
+            </button>
 
-            <a
-              href="/play"
-              className={`inline-block px-8 py-4 text-lg rounded-lg text-white font-medium text-center min-w-[200px] transition-colors ${
+            <button
+              onClick={() => handleNavigate("/play")}
+              disabled={!pack || teams.length === 0}
+              className={`px-8 py-4 text-lg rounded-lg text-white font-medium text-center min-w-[200px] transition-colors ${
                 pack && teams.length > 0
                   ? "bg-primary hover:bg-primary/90 active:bg-primary/80"
                   : "bg-gray-400 cursor-not-allowed"
               }`}
             >
               Board View (Display)
-            </a>
+            </button>
 
             <button
               onClick={resetGame}

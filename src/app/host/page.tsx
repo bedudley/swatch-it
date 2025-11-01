@@ -5,8 +5,15 @@ import BoardGrid from "@/components/BoardGrid";
 import QuestionModal from "@/components/QuestionModal";
 import HostScoreboard from "@/components/HostScoreboard";
 import Logo from "@/components/Logo";
+import ConnectionStatus from "@/components/ConnectionStatus";
+import { useSyncListener } from "@/lib/useSyncListener";
+import { usePeerSyncListener } from "@/lib/usePeerSync";
 
 export default function HostPage() {
+  // Set up sync listeners for both same-device and cross-device sync
+  useSyncListener();
+  usePeerSyncListener();
+
   const { pack, teams } = useGameStore();
 
   if (!pack || teams.length === 0) {
@@ -32,6 +39,9 @@ export default function HostPage() {
 
   return (
     <div className="bg-background-muted p-4">
+      {/* Connection Status Indicator */}
+      <ConnectionStatus />
+
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
