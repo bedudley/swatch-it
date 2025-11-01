@@ -38,7 +38,8 @@ export default function QuestionModal({ showControls = false }: QuestionModalPro
               {question.prompt}
             </div>
 
-            {showAnswer && (
+            {/* Show answer immediately on host view, or after reveal on play view */}
+            {(showAnswer || showControls) && (
               <div className="mt-12 p-8 bg-success/10 rounded-xl border-4 border-success shadow-lg">
                 <div className="text-3xl sm:text-4xl font-bold text-success mb-4">
                   Answer:
@@ -49,7 +50,7 @@ export default function QuestionModal({ showControls = false }: QuestionModalPro
               </div>
             )}
 
-            {question.notes && showControls && showAnswer && (
+            {question.notes && showControls && (
               <div className="mt-4 p-4 bg-info/10 rounded-lg border border-info">
                 <div className="text-sm font-semibold text-info mb-1">
                   Host Notes:

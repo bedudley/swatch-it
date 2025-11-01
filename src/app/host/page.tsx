@@ -99,8 +99,8 @@ export default function HostPage() {
         </div>
       </div>
 
-      {/* Scoreboard - Fixed above Footer */}
-      <div className="fixed bottom-12 left-0 right-0 bg-card border-t border-border shadow-lg">
+      {/* Scoreboard - Fixed at bottom (mobile) or above footer (desktop) */}
+      <div className={`fixed left-0 right-0 bg-card border-t border-border shadow-lg ${isMobile ? 'bottom-0' : 'bottom-12'}`}>
         <div className="max-w-7xl mx-auto p-4">
           <HostScoreboard showControls={true} />
         </div>

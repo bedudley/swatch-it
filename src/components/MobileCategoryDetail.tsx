@@ -64,13 +64,13 @@ export default function MobileCategoryDetail() {
               <button
                 key={question.value}
                 onClick={() => handleQuestionClick(question.value)}
-                className="w-full bg-primary text-white rounded-lg shadow-md p-6 text-left hover:bg-primary/90 active:scale-98 transition-all"
+                className="w-full bg-tertiary text-white rounded-lg shadow-md p-6 hover:bg-tertiary/90 active:scale-98 transition-all"
               >
-                <div className="flex items-center justify-between">
-                  <span className="text-3xl font-bold">
+                <div className="flex items-center justify-center gap-3">
+                  <span className="text-4xl font-bold">
                     {question.value}
                   </span>
-                  <span className="text-lg opacity-90">
+                  <span className="text-xl opacity-90">
                     points
                   </span>
                 </div>
