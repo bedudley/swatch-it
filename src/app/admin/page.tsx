@@ -1,23 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useGameStore } from "@/lib/store";
 import { PackSchema } from "@/lib/schema";
 import { getPackSummary } from "@/lib/packUtils";
-import { getPeerSync } from "@/lib/peerSync";
 import { useSyncListener } from "@/lib/useSyncListener";
 import { usePeerSyncListener } from "@/lib/usePeerSync";
 import Logo from "@/components/Logo";
 import PackLibrary from "@/components/PackLibrary";
-import MultiDeviceSetup from "@/components/MultiDeviceSetup";
+import ConnectionModal from "@/components/ConnectionModal";
+import { useEnableHost } from "@/lib/usePeerSync";
 
 export default function AdminPage() {
   // Set up sync listeners for both same-device and cross-device sync
   useSyncListener();
   usePeerSyncListener();
 
-  const router = useRouter();
   const {
     teams,
     pack,
@@ -32,6 +30,8 @@ export default function AdminPage() {
   const [error, setError] = useState("");
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "success" | "error">("idle");
+  const [showConnectionModal, setShowConnectionModal] = useState(false);
+  const { enableHost, hostId } = useEnableHost();
 
   const handleAddTeam = () => {
     if (newTeamName.trim()) {
@@ -40,39 +40,21 @@ export default function AdminPage() {
     }
   };
 
-  const handleNavigate = async (path: string) => {
-    const peerSync = getPeerSync();
+  const handleStartGame = async () => {
+    console.log('[Admin] Start Game clicked');
 
-    // If we're the host, ensure state is synced before navigation
-    if (peerSync.isActive && peerSync.getStatus().role === 'host') {
-      console.log('[Admin] Broadcasting current state before navigation...');
-
-      // Get current game state
-      const currentState = useGameStore.getState();
-      const gameState = {
-        teams: currentState.teams,
-        boardDisabled: currentState.boardDisabled,
-        opened: currentState.opened,
-        history: currentState.history,
-        pack: currentState.pack,
-        currentQuestion: currentState.currentQuestion,
-        showAnswer: currentState.showAnswer,
-        multiDeviceMode: currentState.multiDeviceMode,
-        hostRoomId: currentState.hostRoomId,
-      };
-
-      // Broadcast state first
-      peerSync.broadcastState(gameState);
-
-      // Small delay to ensure state is sent before navigation
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      // Then send navigation
-      peerSync.sendNavigation(path);
+    // Enable host mode and show connection modal
+    try {
+      await enableHost();
+      setShowConnectionModal(true);
+    } catch (error) {
+      console.error('[Admin] Failed to enable host:', error);
+      alert('Failed to start host mode. Please try again.');
     }
+  };
 
-    // Navigate locally
-    router.push(path);
+  const handleCloseConnectionModal = () => {
+    setShowConnectionModal(false);
   };
 
   const handleFileUpload = (file: File) => {
@@ -309,9 +291,6 @@ export default function AdminPage() {
           )}
         </div>
 
-        {/* Multi-Device Setup */}
-        <MultiDeviceSetup />
-
         {/* Teams Section */}
         <div className="bg-card rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-2xl font-semibold mb-4 text-text-primary">Teams</h2>
@@ -362,11 +341,11 @@ export default function AdminPage() {
 
         {/* Game Controls */}
         <div className="bg-card rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-semibold mb-4 text-text-primary">Game Controls</h2>
+          <h2 className="text-2xl font-semibold mb-4 text-text-primary">Start Game</h2>
 
           <div className="flex flex-col sm:flex-row gap-4">
             <button
-              onClick={() => handleNavigate("/host")}
+              onClick={handleStartGame}
               disabled={!pack || teams.length === 0}
               className={`px-8 py-4 text-lg rounded-lg text-white font-medium text-center min-w-[200px] transition-colors ${
                 pack && teams.length > 0
@@ -374,19 +353,7 @@ export default function AdminPage() {
                   : "bg-gray-400 cursor-not-allowed"
               }`}
             >
-              Start Game (Host View)
-            </button>
-
-            <button
-              onClick={() => handleNavigate("/play")}
-              disabled={!pack || teams.length === 0}
-              className={`px-8 py-4 text-lg rounded-lg text-white font-medium text-center min-w-[200px] transition-colors ${
-                pack && teams.length > 0
-                  ? "bg-primary hover:bg-primary/90 active:bg-primary/80"
-                  : "bg-gray-400 cursor-not-allowed"
-              }`}
-            >
-              Board View (Display)
+              Start Game
             </button>
 
             <button
@@ -404,6 +371,13 @@ export default function AdminPage() {
           )}
         </div>
       </div>
+
+      {/* Connection Modal */}
+      <ConnectionModal
+        isOpen={showConnectionModal}
+        onClose={handleCloseConnectionModal}
+        hostId={hostId}
+      />
     </div>
   );
 }

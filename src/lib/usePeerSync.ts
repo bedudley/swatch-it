@@ -6,6 +6,8 @@ import { useGameStore } from './store';
 // Hook to set up peer sync listener in components
 export function usePeerSyncListener() {
   const router = useRouter();
+  const [showReconnectModal, setShowReconnectModal] = useState(false);
+  const [wasConnected, setWasConnected] = useState(false);
 
   useEffect(() => {
     const peerSync = getPeerSync();
@@ -40,9 +42,30 @@ export function usePeerSyncListener() {
       }
     });
 
-    // Cleanup subscription on unmount
-    return unsubscribe;
-  }, [router]);
+    // Subscribe to connection status changes to detect disconnections
+    const unsubscribeStatus = peerSync.subscribeStatus((status: ConnectionStatus) => {
+      console.log('[usePeerSync] Connection status changed:', status);
+
+      // Track if we were previously connected
+      if (status.role === 'client' && status.connected) {
+        setWasConnected(true);
+      }
+
+      // If we're a client and we were connected but now we're not, show reconnection modal
+      if (status.role === 'client' && wasConnected && !status.connected) {
+        console.log('[usePeerSync] Connection lost, showing reconnection modal');
+        setShowReconnectModal(true);
+      }
+    });
+
+    // Cleanup subscriptions on unmount
+    return () => {
+      unsubscribe();
+      unsubscribeStatus();
+    };
+  }, [router, wasConnected]);
+
+  return { showReconnectModal, setShowReconnectModal };
 }
 
 // Handle actions received from peers

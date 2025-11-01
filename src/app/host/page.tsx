@@ -6,13 +6,14 @@ import QuestionModal from "@/components/QuestionModal";
 import HostScoreboard from "@/components/HostScoreboard";
 import Logo from "@/components/Logo";
 import ConnectionStatus from "@/components/ConnectionStatus";
+import ReconnectionModal from "@/components/ReconnectionModal";
 import { useSyncListener } from "@/lib/useSyncListener";
 import { usePeerSyncListener } from "@/lib/usePeerSync";
 
 export default function HostPage() {
   // Set up sync listeners for both same-device and cross-device sync
   useSyncListener();
-  usePeerSyncListener();
+  const { showReconnectModal, setShowReconnectModal } = usePeerSyncListener();
 
   const { pack, teams } = useGameStore();
 
@@ -91,6 +92,13 @@ export default function HostPage() {
 
       {/* Question Modal */}
       <QuestionModal showControls={true} />
+
+      {/* Reconnection Modal */}
+      <ReconnectionModal
+        isOpen={showReconnectModal}
+        onClose={() => setShowReconnectModal(false)}
+        onReconnect={() => setShowReconnectModal(false)}
+      />
     </div>
   );
 }
