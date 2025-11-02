@@ -52,7 +52,7 @@ export type Team = {
 
 export type GameAction = {
   key: string;
-  teamId?: string;
+  teamId?: string | null;
   delta?: number;
   timestamp: number;
 };
