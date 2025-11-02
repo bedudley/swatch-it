@@ -7,17 +7,15 @@ import { useGameStore } from './store';
 export function usePeerSyncListener() {
   const router = useRouter();
   const [showReconnectModal, setShowReconnectModal] = useState(false);
-  const [wasConnected, setWasConnected] = useState(false);
 
+  // Get store values that we'll watch for changes
+  const multiDeviceMode = useGameStore((state) => state.multiDeviceMode);
+  const hostRoomId = useGameStore((state) => state.hostRoomId);
+  const lastConnectedAt = useGameStore((state) => state.lastConnectedAt);
+
+  // Set up message subscriptions and status listeners (runs once on mount)
   useEffect(() => {
     const peerSync = getPeerSync();
-
-    // If we're a client and just mounted, request the latest state
-    const status = peerSync.getStatus();
-    if (status.role === 'client' && status.connected) {
-      console.log('[usePeerSync] Component mounted as client, requesting state...');
-      peerSync.requestState();
-    }
 
     // Subscribe to messages from other peers
     const unsubscribe = peerSync.subscribe((message: PeerSyncMessage) => {
@@ -46,15 +44,43 @@ export function usePeerSyncListener() {
     const unsubscribeStatus = peerSync.subscribeStatus((status: ConnectionStatus) => {
       console.log('[usePeerSync] Connection status changed:', status);
 
-      // Track if we were previously connected
+      // If we're a client and connected, hide the reconnection modal
       if (status.role === 'client' && status.connected) {
-        setWasConnected(true);
+        console.log('[usePeerSync] Client connected, hiding reconnection modal');
+        setShowReconnectModal(false);
       }
 
-      // If we're a client and we were connected but now we're not, show reconnection modal
-      if (status.role === 'client' && wasConnected && !status.connected) {
-        console.log('[usePeerSync] Connection lost, showing reconnection modal');
+      // If we're a client and disconnected, show modal and attempt auto-reconnect
+      if (status.role === 'client' && !status.connected) {
+        console.log('[usePeerSync] Client disconnected, showing reconnection modal and starting auto-reconnect');
         setShowReconnectModal(true);
+
+        // Start auto-reconnect attempts
+        const attemptReconnects = async () => {
+          const reconnectState = peerSync.getReconnectionState();
+
+          // Only start if not already reconnecting
+          if (!reconnectState.isReconnecting) {
+            try {
+              await peerSync.attemptReconnect();
+              console.log('[usePeerSync] Auto-reconnect successful!');
+              // Update timestamp on successful reconnection
+              useGameStore.setState({ lastConnectedAt: Date.now() });
+            } catch (error) {
+              console.error('[usePeerSync] Auto-reconnect failed:', error);
+
+              // If we haven't hit max attempts, try again
+              const newState = peerSync.getReconnectionState();
+              if (newState.attempt < newState.maxAttempts) {
+                attemptReconnects();
+              } else {
+                console.log('[usePeerSync] Max reconnection attempts reached');
+              }
+            }
+          }
+        };
+
+        attemptReconnects();
       }
     });
 
@@ -63,7 +89,57 @@ export function usePeerSyncListener() {
       unsubscribe();
       unsubscribeStatus();
     };
-  }, [router, wasConnected]);
+  }, [router]);
+
+  // Auto-rejoin logic (runs when multiDeviceMode or hostRoomId changes - i.e., after hydration)
+  useEffect(() => {
+    const peerSync = getPeerSync();
+
+    // Only attempt auto-rejoin if we're in client mode with a host room ID but not connected
+    if (multiDeviceMode === 'client' && hostRoomId && !peerSync.isActive) {
+      // Validate session age (30 minute timeout)
+      const MAX_SESSION_AGE = 30 * 60 * 1000; // 30 minutes
+      const sessionAge = lastConnectedAt ? Date.now() - lastConnectedAt : Infinity;
+      const isStaleSession = sessionAge > MAX_SESSION_AGE;
+
+      if (isStaleSession) {
+        console.log('[usePeerSync] Session expired (age:', Math.round(sessionAge / 1000), 'seconds), clearing stale data');
+        // Clear stale session data
+        useGameStore.getState().setMultiDeviceMode('disabled', null);
+        // Show reconnection modal with "Join New Game" option
+        setShowReconnectModal(true);
+        return;
+      }
+
+      // Session is valid, attempt auto-rejoin
+      console.log('[usePeerSync] Auto-rejoining after page refresh, hostRoomId:', hostRoomId);
+
+      // Wrap in setTimeout to avoid hydration errors (run after initial render)
+      const autoRejoinTimer = setTimeout(() => {
+        peerSync.joinHost(hostRoomId)
+          .then(() => {
+            console.log('[usePeerSync] Auto-rejoin successful');
+            // Update timestamp on successful reconnection
+            useGameStore.setState({ lastConnectedAt: Date.now() });
+            peerSync.requestState();
+          })
+          .catch((error) => {
+            console.error('[usePeerSync] Auto-rejoin failed:', error);
+            // Show reconnection modal on failure
+            setShowReconnectModal(true);
+          });
+      }, 0);
+
+      return () => clearTimeout(autoRejoinTimer);
+    }
+
+    // If we're a client and already connected, request the latest state
+    const status = peerSync.getStatus();
+    if (status.role === 'client' && status.connected) {
+      console.log('[usePeerSync] Component mounted as client, requesting state...');
+      peerSync.requestState();
+    }
+  }, [multiDeviceMode, hostRoomId, lastConnectedAt]);
 
   return { showReconnectModal, setShowReconnectModal };
 }
@@ -175,8 +251,9 @@ export function useJoinHost() {
       const peerSync = getPeerSync();
       await peerSync.joinHost(hostId);
 
-      // Update store with client role
+      // Update store with client role and timestamp
       useGameStore.getState().setMultiDeviceMode('client', hostId);
+      useGameStore.setState({ lastConnectedAt: Date.now() });
 
       return true;
     } catch (err) {

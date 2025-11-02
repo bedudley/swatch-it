@@ -53,6 +53,7 @@ const initialState: GameState = {
   showAnswer: false,
   multiDeviceMode: 'disabled',
   hostRoomId: null,
+  lastConnectedAt: null,
   selectedCategoryId: null,
 };
 
@@ -199,18 +200,19 @@ export const useGameStore = create<GameStore>()(
     closeQuestion: () => {
       const state = get();
 
-      // If there's a current question, check if it was scored
+      // If there's a current question, check if it was scored/completed
       let updatedOpened = state.opened;
       if (state.currentQuestion) {
         const key = `${state.currentQuestion.categoryId}:${state.currentQuestion.value}`;
 
-        // Check if this question was scored (has a scoring action in history)
-        const wasScored = state.history.some(
-          action => action.key === key && action.teamId && action.delta
+        // Check if this question was completed (has a scoring action in history)
+        // This includes both correct answers (teamId set) and "no one got it" (delta === 0)
+        const wasCompleted = state.history.some(
+          action => action.key === key && (action.teamId || action.delta !== undefined)
         );
 
-        // If not scored, remove from opened so it can be clicked again
-        if (!wasScored) {
+        // If not completed, remove from opened so it can be clicked again
+        if (!wasCompleted) {
           updatedOpened = { ...state.opened };
           delete updatedOpened[key];
         }
@@ -265,6 +267,22 @@ export const useGameStore = create<GameStore>()(
     },
 
     markIncorrect: () => {
+      const state = get();
+      if (!state.currentQuestion) return;
+
+      // Add a history action to mark this question as completed (but with no points)
+      // This ensures closeQuestion() will keep it in the 'opened' set
+      const action = {
+        key: `${state.currentQuestion.categoryId}:${state.currentQuestion.value}`,
+        teamId: null, // No team scored
+        delta: 0, // No points awarded
+        timestamp: Date.now(),
+      };
+
+      set((state) => ({
+        history: [...state.history, action],
+      }));
+
       get().closeQuestion();
     },
 
@@ -368,9 +386,13 @@ export const useGameStore = create<GameStore>()(
   {
     name: 'swatch-it-storage',
     partialize: (state) => {
-      // Don't persist anything when in client mode - host will send state
+      // Persist minimal reconnection data when in client mode
       if (state.multiDeviceMode === 'client') {
-        return {};
+        return {
+          hostRoomId: state.hostRoomId,
+          multiDeviceMode: state.multiDeviceMode,
+          lastConnectedAt: state.lastConnectedAt,
+        };
       }
       // Normal persistence for host and disabled modes
       return {
@@ -379,17 +401,27 @@ export const useGameStore = create<GameStore>()(
         opened: state.opened,
       };
     },
-    // Custom storage that skips loading when joining as client
+    // Custom storage that allows reconnection data but skips full state on initial join
     storage: {
       getItem: (name) => {
-        // Check if we're joining as a client (coming from /join with room param)
         if (typeof window !== 'undefined') {
           const urlParams = new URLSearchParams(window.location.search);
           const isJoiningAsClient = urlParams.get('room') !== null;
 
           if (isJoiningAsClient) {
-            console.log('[Store] Client mode detected - skipping localStorage load');
+            console.log('[Store] Client mode detected - skipping full localStorage load');
             return null; // Return null to use initial state instead
+          }
+
+          // For client reconnection (not initial join), allow loading reconnection data
+          const item = localStorage.getItem(name);
+          if (item) {
+            const parsed = JSON.parse(item);
+            // If we have client mode data (reconnection context), allow it
+            if (parsed.multiDeviceMode === 'client' && parsed.hostRoomId) {
+              console.log('[Store] Loading client reconnection data from localStorage');
+              return parsed;
+            }
           }
         }
 
