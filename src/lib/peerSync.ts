@@ -34,6 +34,13 @@ export class PeerGameSync {
   private hostConnection: DataConnection | null = null;
   private onNewClientConnected: ((conn: DataConnection) => void) | null = null;
 
+  // Reconnection state
+  private lastHostId: string | null = null;
+  private reconnectionAttempts: number = 0;
+  private isReconnecting: boolean = false;
+  private reconnectTimer: NodeJS.Timeout | null = null;
+  private maxReconnectAttempts: number = 5;
+
   constructor() {
     // Will initialize when enableHost() or joinHost() is called
   }
@@ -53,14 +60,21 @@ export class PeerGameSync {
     }
 
     return new Promise((resolve, reject) => {
+      let isResolved = false; // Track if promise already settled
+
       // Set a timeout to catch if PeerJS server is unresponsive
       const timeout = setTimeout(() => {
+        if (isResolved) return; // Already resolved/rejected
+
         console.error('[PeerSync] ⏱️ Timeout: PeerJS did not connect within 15 seconds');
         console.error('[PeerSync] This usually means the PeerJS cloud server is down or unreachable');
+
         if (this.peer) {
           this.peer.destroy();
           this.peer = null;
         }
+
+        isResolved = true;
         reject(new Error('Connection to PeerJS server timed out. The PeerJS cloud server may be down.'));
       }, 15000);
 
@@ -69,12 +83,8 @@ export class PeerGameSync {
         console.log('[PeerSync] Peer constructor available:', typeof Peer);
 
         // Create a new peer with STUN server configuration for better NAT traversal
-        // Try with explicit host/port (using peerjs.com cloud server)
+        // Use default PeerJS cloud server (let PeerJS handle the connection)
         this.peer = new Peer({
-          host: '0.peerjs.com',
-          port: 443,
-          path: '/',
-          secure: true,
           config: {
             iceServers: [
               { urls: 'stun:stun.l.google.com:19302' },
@@ -85,11 +95,14 @@ export class PeerGameSync {
         });
 
         console.log('[PeerSync] ✅ Peer instance created:', this.peer);
-        console.log('[PeerSync] Attempting to connect to PeerJS cloud server at 0.peerjs.com:443...');
+        console.log('[PeerSync] Attempting to connect to PeerJS cloud server...');
         this.role = 'host';
 
         this.peer.on('open', (id) => {
+          if (isResolved) return; // Already timed out
+
           clearTimeout(timeout);
+          isResolved = true;
           console.log('[PeerSync] ✅ Host enabled with ID:', id);
           console.log('[PeerSync] Ready to accept client connections');
           this.notifyStatusChange();
@@ -102,7 +115,10 @@ export class PeerGameSync {
         });
 
         this.peer.on('error', (error) => {
+          if (isResolved) return; // Already timed out or resolved
+
           clearTimeout(timeout);
+          isResolved = true;
           console.error('[PeerSync] ❌ Peer error:', error);
           console.error('[PeerSync] Error type:', error.type);
           console.error('[PeerSync] Full error:', JSON.stringify(error, null, 2));
@@ -117,6 +133,7 @@ export class PeerGameSync {
         console.log('[PeerSync] Event listeners registered, waiting for "open" event...');
       } catch (error) {
         clearTimeout(timeout);
+        isResolved = true;
         console.error('[PeerSync] ❌ Exception in enableHost:', error);
         reject(error);
       }
@@ -125,24 +142,29 @@ export class PeerGameSync {
 
   // Join an existing host as a client
   async joinHost(hostId: string): Promise<void> {
+    // Store hostId for reconnection attempts
+    this.lastHostId = hostId;
+
     return new Promise((resolve, reject) => {
+      let isResolved = false; // Track if promise already settled
+
       // Set a timeout to catch if PeerJS server is unresponsive
       const timeout = setTimeout(() => {
+        if (isResolved) return; // Already resolved/rejected
+
         console.error('[PeerSync] ⏱️ Timeout: PeerJS did not connect within 15 seconds');
         if (this.peer) {
           this.peer.destroy();
           this.peer = null;
         }
+
+        isResolved = true;
         reject(new Error('Connection to PeerJS server timed out.'));
       }, 15000);
 
       try {
         // Create a new peer with STUN server configuration for better NAT traversal
         this.peer = new Peer({
-          host: '0.peerjs.com',
-          port: 443,
-          path: '/',
-          secure: true,
           config: {
             iceServers: [
               { urls: 'stun:stun.l.google.com:19302' },
@@ -154,6 +176,8 @@ export class PeerGameSync {
         this.role = 'client';
 
         this.peer.on('open', (id) => {
+          if (isResolved) return; // Already timed out
+
           clearTimeout(timeout);
           console.log('[PeerSync] ✅ Client initialized with ID:', id);
           console.log('[PeerSync] 🔄 Attempting to connect to host:', hostId);
@@ -166,8 +190,14 @@ export class PeerGameSync {
           this.hostConnection = conn;
 
           conn.on('open', () => {
+            if (isResolved) return; // Already timed out
+
+            isResolved = true;
             console.log('[PeerSync] ✅ Successfully connected to host!');
             console.log('[PeerSync] Connection is open and ready for data transfer');
+            // Reset reconnection state on successful connection
+            this.reconnectionAttempts = 0;
+            this.isReconnecting = false;
             this.notifyStatusChange();
             resolve();
           });
@@ -185,22 +215,109 @@ export class PeerGameSync {
           });
 
           conn.on('error', (error) => {
+            if (isResolved) return; // Already handled
+
+            isResolved = true;
             console.error('[PeerSync] ❌ Connection error:', error);
             reject(error);
           });
         });
 
         this.peer.on('error', (error) => {
+          if (isResolved) return; // Already timed out or resolved
+
           clearTimeout(timeout);
+          isResolved = true;
           console.error('[PeerSync] ❌ Peer error:', error);
           console.error('[PeerSync] Error type:', error.type);
           reject(error);
         });
       } catch (error) {
         clearTimeout(timeout);
+        isResolved = true;
         reject(error);
       }
     });
+  }
+
+  // Attempt to reconnect to the host with exponential backoff
+  async attemptReconnect(): Promise<void> {
+    if (this.role !== 'client' || !this.lastHostId) {
+      console.warn('[PeerSync] Cannot reconnect: not a client or no host ID stored');
+      return Promise.reject(new Error('Not a client or no host ID'));
+    }
+
+    if (this.isReconnecting) {
+      console.log('[PeerSync] Reconnection already in progress');
+      return Promise.reject(new Error('Reconnection in progress'));
+    }
+
+    if (this.reconnectionAttempts >= this.maxReconnectAttempts) {
+      console.error('[PeerSync] Max reconnection attempts reached');
+      return Promise.reject(new Error('Max reconnection attempts reached'));
+    }
+
+    this.isReconnecting = true;
+    this.reconnectionAttempts++;
+
+    // Calculate exponential backoff: 1s, 2s, 4s, 8s, 16s
+    const backoffMs = Math.min(1000 * Math.pow(2, this.reconnectionAttempts - 1), 16000);
+
+    console.log(`[PeerSync] 🔄 Reconnection attempt ${this.reconnectionAttempts}/${this.maxReconnectAttempts} in ${backoffMs}ms`);
+
+    return new Promise((resolve, reject) => {
+      this.reconnectTimer = setTimeout(async () => {
+        try {
+          // Clean up old peer if it exists
+          if (this.peer) {
+            this.peer.destroy();
+            this.peer = null;
+          }
+
+          // Attempt to rejoin
+          await this.joinHost(this.lastHostId!);
+
+          // Request full state from host
+          this.requestState();
+
+          console.log('[PeerSync] ✅ Reconnection successful!');
+          this.isReconnecting = false;
+          resolve();
+        } catch (error) {
+          console.error(`[PeerSync] ❌ Reconnection attempt ${this.reconnectionAttempts} failed:`, error);
+          this.isReconnecting = false;
+
+          // Try again if we haven't exceeded max attempts
+          if (this.reconnectionAttempts < this.maxReconnectAttempts) {
+            this.notifyStatusChange(); // Notify UI of attempt failure
+            reject(error);
+          } else {
+            console.error('[PeerSync] All reconnection attempts exhausted');
+            reject(new Error('All reconnection attempts failed'));
+          }
+        }
+      }, backoffMs);
+    });
+  }
+
+  // Cancel ongoing reconnection attempts
+  cancelReconnection() {
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+    this.isReconnecting = false;
+    this.reconnectionAttempts = 0;
+    console.log('[PeerSync] Reconnection cancelled');
+  }
+
+  // Get reconnection state (for UI)
+  getReconnectionState() {
+    return {
+      isReconnecting: this.isReconnecting,
+      attempt: this.reconnectionAttempts,
+      maxAttempts: this.maxReconnectAttempts,
+    };
   }
 
   // Handle incoming connections (host only)
@@ -209,8 +326,20 @@ export class PeerGameSync {
 
     conn.on('open', () => {
       console.log('[PeerSync] ✅ Client connection opened:', conn.peer);
-      console.log('[PeerSync] Total connected devices:', this.connections.size + 1);
+
+      // Check if we already have a connection from this peer and close the old one
+      const existingConn = this.connections.get(conn.peer);
+      if (existingConn && existingConn !== conn) {
+        console.log('[PeerSync] Replacing stale connection for peer:', conn.peer);
+        try {
+          existingConn.close();
+        } catch (e) {
+          console.warn('[PeerSync] Error closing stale connection:', e);
+        }
+      }
+
       this.connections.set(conn.peer, conn);
+      console.log('[PeerSync] Total connected devices:', this.connections.size);
       this.notifyStatusChange();
 
       // Request initial state sync callback
