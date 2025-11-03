@@ -11,7 +11,7 @@
           { "value": 100, "prompt": "What is the underlying pigment at a level 7?", "answer": "Orange", "type": "text" },
           { "value": 200, "prompt": "When lifting from level 4 to level 8, which underlying pigment must you control?", "answer": "Yellow-Orange", "type": "text" },
           { "value": 300, "prompt": "True or False: Underlying pigment becomes less warm as you lift higher.", "answer": "False", "type": "text" },
-          { "value": 400, "prompt": "Which level first reveals pale yellow as its underlying pigment?", "answer": "Level 10", "type": "text" },
+          { "value": 400, "prompt": "Which level first reveals yellow as its underlying pigment?", "answer": "Level 9", "type": "text" },
           { "value": 500, "prompt": "A client is naturally a level 5. To neutralize the underlying pigment when lifting to level 9, what tone should you formulate with?", "answer": "Violet", "type": "text" }
         ]
       },
@@ -20,10 +20,10 @@
         "name": "Formulation Fixes",
         "questions": [
           { "value": 100, "prompt": "What is the complementary tone to neutralize orange?", "answer": "Blue", "type": "text" },
-          { "value": 200, "prompt": "What is the best strategy when trying to darken overly ashy blonde without it going muddy?", "answer": "Add warmth or a gold base", "type": "text" },
-          { "value": 300, "prompt": "You lifted a level 6 to an uneven level 8/9 with warmth remaining. What two-step process corrects this?", "answer": "Tone remaining warmth, then apply final formula or glaze", "type": "text" },
-          { "value": 400, "prompt": "What does double application or “filling” mean in color correction?", "answer": "Replacing underlying pigment before depositing darker color", "type": "text" },
-          { "value": 500, "prompt": "A guest wants to return from platinum blonde to level 5 brown. Which tones should you add to your filler formula to prevent green/muddy results?", "answer": "Red and Gold", "type": "text" }
+          { "value": 200, "prompt": "What is the best strategy when trying to darken overly ashy blonde without it going muddy?", "answer": "Remove ash and add missing underlying pigments", "type": "text" },
+          { "value": 300, "prompt": "You lifted a level 6 to an uneven level 8 with a lot of warmth remaining. What process should you take to corrects this?", "answer": "Tone to the darkest level shown for more even results", "type": "text" },
+          { "value": 400, "prompt": "What does double process mean in color correction?", "answer": "When you need at least two color applications in a service", "type": "text" },
+          { "value": 500, "prompt": "A guest wants to return from platinum blonde to level 5 brown. Which tones should you add to your filler formula to prevent green/muddy results?", "answer": "Red and Orange", "type": "text" }
         ]
       },
       {
@@ -33,8 +33,8 @@
           { "value": 100, "prompt": "Overlapping bleach can lead to what common issue?", "answer": "Breakage/porosity", "type": "text" },
           { "value": 200, "prompt": "True or False: Uneven lift can sometimes be corrected with a wet balayage or “soap cap.”", "answer": "True", "type": "text" },
           { "value": 300, "prompt": "A band of darker color remains mid-shaft after lifting. What’s the technique to even it out?", "answer": "Apply lightener only to the band for targeted lift", "type": "text" },
-          { "value": 400, "prompt": "What’s a safe way to re-lighten hair that has become elastic or gummy?", "answer": "Strengthen first (bond builder/protein treatments), then use low-volume lightener carefully", "type": "text" },
-          { "value": 500, "prompt": "Why is porosity testing important before toning compromised blonde?", "answer": "Porous hair grabs ash, turning muddy or drab", "type": "text" }
+          { "value": 400, "prompt": "What’s a safe way to re-lighten hair that has become elastic or gummy?", "answer": "You don't! Send them home with bond builder/protein treatments, reschedule, and use low-volume lightener carefully", "type": "text" },
+          { "value": 500, "prompt": "Why is porosity testing important before toning compromised blonde?", "answer": "Porous hair grabs ash, turning muddy or drab, or doesn't grab at all", "type": "text" }
         ]
       },
       {
@@ -43,19 +43,19 @@
         "questions": [
           { "value": 100, "prompt": "What tone counteracts yellow?", "answer": "Violet", "type": "text" },
           { "value": 200, "prompt": "A toner came out too dark. What’s the quickest way to soften it without re-lightening?", "answer": "Clarifying shampoo or gentle color remover", "type": "text" },
-          { "value": 300, "prompt": "A toner that looked perfect in the bowl but turned green on application—what went wrong?", "answer": "Lack of warmth in formula / porosity issue", "type": "text" },
-          { "value": 400, "prompt": "Why should you consider natural light when evaluating tone?", "answer": "Artificial light can distort warmth or ash", "type": "text" },
-          { "value": 500, "prompt": "Explain “over-toning” and its consequence.", "answer": "Leaving toner too long, causing overly ashy or muddy results", "type": "text" }
+          { "value": 300, "prompt": "A toner turned green upon application—what went wrong?", "answer": "Too much blue in the formula on a yellow base", "type": "text" },
+          { "value": 400, "prompt": "Why should you consider natural light when evaluating tone?", "answer": "Artificial light can distort warmth, ash, and depth", "type": "text" },
+          { "value": 500, "prompt": "Explain “over-toning” and its consequence.", "answer": "Leaving toner too long, causing overly ash or dark results", "type": "text" }
         ]
       },
       {
         "id": "rs1",
         "name": "Real-World Scenarios",
         "questions": [
-          { "value": 100, "prompt": "Your client’s ends are a level 10, mid-shafts a level 8, and roots a level 7. What’s your first priority?", "answer": "Even out the mid-shaft before toning all-over", "type": "text" },
-          { "value": 200, "prompt": "A client used box black dye for years and now wants balayage. What’s your realistic first step?", "answer": "Perform a strand test and plan for gradual lightening over multiple sessions", "type": "text" },
+          { "value": 100, "prompt": "Your client’s ends are a level 10, mid-shafts a level 8, and roots a level 7. What’s your first priority?", "answer": "Even out the mid-shaft", "type": "text" },
+          { "value": 200, "prompt": "A client used box black dye for years and now wants balayage. What’s your realistic first step?", "answer": "Perform a strand test", "type": "text" },
           { "value": 300, "prompt": "After a color correction, the hair feels fragile. What at-home care do you recommend?", "answer": "Bond-building treatments, sulfate-free shampoo, and protein/moisture balance", "type": "text" },
-          { "value": 400, "prompt": "Your guest’s highlights turned brassy after a week. What might have caused it?", "answer": "Minerals/chlorine, fading toner, or insufficient neutralization", "type": "text" },
+          { "value": 400, "prompt": "Your guest’s highlights turned brassy after a week. What might have caused it?", "answer": "Minerals/chlorine, fading toner, or insufficient neutralization, didnt lift high enough", "type": "text" },
           { "value": 500, "prompt": "Describe your consultation strategy for a first-time color correction client.", "answer": "Assess history, strand test, discuss expectations, timeline, and aftercare", "type": "text" }
         ]
       }
