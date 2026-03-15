@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.5.16",
-    "next": "15.5.2",
+    "next": "15.5.9",
     "peerjs": "^1.5.5",
     "qrcode.react": "^4.2.0",
     "react": "19.1.0",
