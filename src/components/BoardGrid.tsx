@@ -36,8 +36,8 @@ export default function BoardGrid() {
         {categories.map((category) => (
           <div
             key={category.id}
-            className="bg-secondary text-gray-800 text-center p-6 rounded-lg font-bold text-xl sm:text-2xl lg:text-3xl uppercase tracking-wide shadow-lg"
-            style={{ minHeight: "120px" }}
+            className="bg-secondary text-gray-800 text-center p-6 rounded-lg font-bold uppercase tracking-wide shadow-lg"
+            style={{ minHeight: "120px", fontSize: "clamp(0.85rem, 2vw, 2.25rem)" }}
           >
             <div className="flex items-center justify-center h-full">
               {category.name}
