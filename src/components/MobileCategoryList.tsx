@@ -26,7 +26,7 @@ export default function MobileCategoryList() {
             </h3>
 
             {/* Progress indicator with mini question badges */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 justify-center">
               {category.questions
                 .sort((a, b) => a.value - b.value)
                 .map((question) => {

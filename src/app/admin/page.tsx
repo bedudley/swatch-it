@@ -193,7 +193,7 @@ export default function AdminPage() {
           </div>
 
           {/* Custom Pack Upload */}
-          <div>
+          <div style={{ display: 'none' }}>
             <h4 className="text-md font-semibold mb-3 text-text-primary">Upload Custom Pack</h4>
             <div
               onDrop={handleDrop}
@@ -314,7 +314,7 @@ export default function AdminPage() {
 
           <div className="space-y-4">
             {teams.map((team) => (
-              <div key={team.id} className="flex items-center gap-4 p-4 border-2 border-border rounded-lg bg-background-muted">
+              <div key={team.id} className="flex items-center gap-4 p-4 border-2 border-border rounded-lg bg-[#333]">
                 <input
                   type="text"
                   value={team.name}
@@ -340,9 +340,7 @@ export default function AdminPage() {
         </div>
 
         {/* Game Controls */}
-        <div className="bg-card rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-semibold mb-4 text-text-primary">Start Game</h2>
-
+        <div className="flex flex-col items-center gap-3 py-2">
           <div className="flex flex-col sm:flex-row gap-4">
             <button
               onClick={handleStartGame}
@@ -365,7 +363,7 @@ export default function AdminPage() {
           </div>
 
           {(!pack || teams.length === 0) && (
-            <p className="text-warning mt-4 text-sm">
+            <p className="text-warning text-sm">
               ⚠️ Load a pack and add teams before starting the game
             </p>
           )}
