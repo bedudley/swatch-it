@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useGameStore } from "@/lib/store";
 import BoardGrid from "@/components/BoardGrid";
 import QuestionModal from "@/components/QuestionModal";
@@ -19,6 +20,7 @@ export default function HostPage() {
   const { showReconnectModal, setShowReconnectModal } = usePeerSyncListener();
 
   const { pack, teams, selectedCategoryId } = useGameStore();
+  const [drawerExpanded, setDrawerExpanded] = useState(false);
   const isMobile = useIsMobile();
 
   if (!pack || teams.length === 0) {
@@ -84,7 +86,7 @@ export default function HostPage() {
         )}
 
         {/* Game Board - Responsive */}
-        <div className="pb-40">
+        <div className="pb-16">
           {isMobile ? (
             // Mobile view: Category list or detail
             selectedCategoryId ? (
@@ -99,11 +101,38 @@ export default function HostPage() {
         </div>
       </div>
 
-      {/* Scoreboard - Fixed at bottom (mobile) or above footer (desktop) */}
-      <div className={`fixed left-0 right-0 bg-card border-t border-border shadow-lg ${isMobile ? 'bottom-0' : 'bottom-12'}`}>
-        <div className="max-w-7xl mx-auto p-4">
-          <HostScoreboard showControls={true} />
-        </div>
+      {/* Scoreboard Drawer - Fixed above footer */}
+      <div className="fixed left-0 right-0 bottom-0 bg-card border-t border-border shadow-lg">
+        {/* Handle — always visible, toggles drawer */}
+        <button
+          onClick={() => setDrawerExpanded(!drawerExpanded)}
+          className="w-full flex items-center justify-between px-4 py-2 hover:bg-white/5 transition-colors"
+          aria-label={drawerExpanded ? "Collapse scoreboard" : "Expand scoreboard"}
+        >
+          {/* Compact scores (collapsed) or label (expanded) */}
+          {drawerExpanded ? (
+            <span className="text-xs text-text-secondary uppercase tracking-wide">Scores &amp; Controls</span>
+          ) : (
+            <div className="flex items-center gap-4 flex-wrap">
+              {teams.map((team) => (
+                <span key={team.id} className="text-sm">
+                  <span className="text-text-secondary">{team.name}</span>
+                  <span className={`ml-2 font-bold ${team.score > 0 ? "text-success" : team.score < 0 ? "text-error" : "text-text-secondary"}`}>
+                    ${team.score}
+                  </span>
+                </span>
+              ))}
+            </div>
+          )}
+          <span className={`text-text-secondary text-xs transition-transform duration-200 ${drawerExpanded ? "rotate-180" : ""}`}>▲</span>
+        </button>
+
+        {/* Expanded controls */}
+        {drawerExpanded && (
+          <div className="max-w-7xl mx-auto px-4 pb-4">
+            <HostScoreboard showControls={true} />
+          </div>
+        )}
       </div>
 
       {/* Question Modal */}
