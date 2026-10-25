@@ -8,10 +8,10 @@
         "id": "up1",
         "name": "Underlying Pigments",
         "questions": [
-          { "value": 100, "prompt": "What is the underlying pigment at a level 7?", "answer": "Orange", "type": "text" },
-          { "value": 200, "prompt": "When lifting from level 4 to level 8, which underlying pigment must you control?", "answer": "Yellow-Orange", "type": "text" },
+          { "value": 100, "prompt": "What is the underlying pigment at a level 7?", "answer": "Orange-Yellow", "type": "text" },
+          { "value": 200, "prompt": "When lifting from level 4 to level 8, which underlying pigments must you control?", "answer": "Red/Orange/Yellow", "type": "text" },
           { "value": 300, "prompt": "True or False: Underlying pigment becomes less warm as you lift higher.", "answer": "False", "type": "text" },
-          { "value": 400, "prompt": "Which level first reveals yellow as its underlying pigment?", "answer": "Level 9", "type": "text" },
+          { "value": 400, "prompt": "Which level first reveals yellow as its underlying pigment?", "answer": "Level 8", "type": "text" },
           { "value": 500, "prompt": "A client is naturally a level 5. To neutralize the underlying pigment when lifting to level 9, what tone should you formulate with?", "answer": "Violet", "type": "text" }
         ]
       },
@@ -23,7 +23,7 @@
           { "value": 200, "prompt": "What is the best strategy when trying to darken overly ashy blonde without it going muddy?", "answer": "Remove ash and add missing underlying pigments", "type": "text" },
           { "value": 300, "prompt": "You lifted a level 6 to an uneven level 8 with a lot of warmth remaining. What process should you take to corrects this?", "answer": "Tone to the darkest level shown for more even results", "type": "text" },
           { "value": 400, "prompt": "What does double process mean in color correction?", "answer": "When you need at least two color applications in a service", "type": "text" },
-          { "value": 500, "prompt": "A guest wants to return from platinum blonde to level 5 brown. Which tones should you add to your filler formula to prevent green/muddy results?", "answer": "Red and Orange", "type": "text" }
+          { "value": 500, "prompt": "A guest wants to return from platinum blonde to level 5 brown. Which tones should you add to your filler formula to prevent green/muddy results?", "answer": "Red/Orange/Yellow", "type": "text" }
         ]
       },
       {

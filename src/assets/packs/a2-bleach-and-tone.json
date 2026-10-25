@@ -9,7 +9,7 @@
         "name": "Bleach & Tone Basics",
         "questions": [
           { "value": 100, "prompt": "What is the underlying pigment at a level 9 blonde?", "answer": "Yellow", "type": "text" },
-          { "value": 200, "prompt": "Why is using 20 volume developer safer for on-scalp bleach than 30 or 40?", "answer": "Lower risk of scalp irritation and swelling, more controlled lift", "type": "text" },
+          { "value": 200, "prompt": "Why is using a lower volume developer safer for on-scalp bleach than 30 or 40?", "answer": "Lower risk of scalp irritation and swelling, more controlled lift", "type": "text" },
           { "value": 300, "prompt": "What additive can be mixed with bleach to maintain integrity during a high lift?", "answer": "Bond builders", "type": "text" },
           { "value": 400, "prompt": "Explain why you should apply bleach to mid-lengths and ends before roots on virgin hair.", "answer": "Roots process faster due to scalp heat; applying them last ensures even lift", "type": "text" },
           { "value": 500, "prompt": "Why would tone after bleaching, even if the blonde looks bright?", "answer": "To neutralize underlying warmth and refine tone for longevity and shine", "type": "text" }
@@ -41,10 +41,10 @@
         "id": "tc1",
         "name": "Troubleshooting & Corrections",
         "questions": [
-          { "value": 100, "prompt": "What’s your first step if a vivid color turns out patchy?", "answer": "Reapply to missed areas or use a color melt to blend", "type": "text" },
+          { "value": 100, "prompt": "What’s your first step if a vivid color turns out patchy?", "answer": "Reapply", "type": "text" },
           { "value": 200, "prompt": "A bleach & tone resulted in banding near the roots—what likely caused it?", "answer": "Applying bleach to roots that is more than half an inch grown out or uneven application", "type": "text" },
           { "value": 300, "prompt": "A pastel vivid faded to a muddy tone. What caused this?", "answer": "Applied over a base that wasn’t lifted/lightened enough", "type": "text" },
-          { "value": 400, "prompt": "How can you safely remove stubborn direct dye without damaging hair?", "answer": "Use a direct dye remover or gentle bleach wash (with bond protection)", "type": "text" },
+          { "value": 400, "prompt": "How can you safely remove stubborn direct dye without damaging hair?", "answer": "Use a direct dye remover, gentle bleach wash (with bond protection), or magic eraser", "type": "text" },
           { "value": 500, "prompt": "A vivid red guest wants to shift to teal. What’s your first step?", "answer": "Remove or neutralize red pigment first (fading or color remover), then pre-lighten to the correct base", "type": "text" }
         ]
       },
