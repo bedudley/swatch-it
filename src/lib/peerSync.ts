@@ -17,6 +17,27 @@ export type PeerSyncMessage = {
   type: 'request_state';
 };
 
+// Host peer IDs are "swatchit-" + a short code, so the code shown on screen
+// is enough to find the host on the PeerJS server.
+const ROOM_PREFIX = 'swatchit-';
+const ROOM_CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no 0/O or 1/I
+
+function generateRoomCode(): string {
+  const bytes = crypto.getRandomValues(new Uint8Array(6));
+  return Array.from(bytes, (b) => ROOM_CODE_ALPHABET[b % ROOM_CODE_ALPHABET.length]).join('');
+}
+
+// Short code to display for a host peer ID
+export function roomCodeFromPeerId(peerId: string): string {
+  return peerId.startsWith(ROOM_PREFIX) ? peerId.slice(ROOM_PREFIX.length) : peerId;
+}
+
+// Accepts a typed room code or a full peer ID (from a QR link) and returns the peer ID
+export function peerIdFromRoomInput(input: string): string {
+  const value = input.trim();
+  return /^[a-z0-9]{6}$/i.test(value) ? ROOM_PREFIX + value.toUpperCase() : value;
+}
+
 export type ConnectionStatus = {
   connected: boolean;
   peerId: string | null;
@@ -84,7 +105,7 @@ export class PeerGameSync {
 
         // Create a new peer with STUN server configuration for better NAT traversal
         // Use default PeerJS cloud server (let PeerJS handle the connection)
-        this.peer = new Peer({
+        this.peer = new Peer(ROOM_PREFIX + generateRoomCode(), {
           config: {
             iceServers: [
               { urls: 'stun:stun.l.google.com:19302' },
@@ -145,8 +166,15 @@ export class PeerGameSync {
     // Store hostId for reconnection attempts
     this.lastHostId = hostId;
 
+    // Drop any peer left over from a failed attempt
+    if (this.peer) {
+      this.peer.destroy();
+      this.peer = null;
+    }
+
     return new Promise((resolve, reject) => {
       let isResolved = false; // Track if promise already settled
+      let connectTimeout: ReturnType<typeof setTimeout> | undefined;
 
       // Set a timeout to catch if PeerJS server is unresponsive
       const timeout = setTimeout(() => {
@@ -189,9 +217,27 @@ export class PeerGameSync {
 
           this.hostConnection = conn;
 
+          // The host was found, but the direct device-to-device link can still fail
+          // (e.g. networks that block peer-to-peer traffic). Don't spin forever.
+          connectTimeout = setTimeout(() => {
+            if (isResolved) return;
+
+            isResolved = true;
+            console.error('[PeerSync] ⏱️ Timeout: found the host but the direct connection never opened');
+            if (this.peer) {
+              this.peer.destroy();
+              this.peer = null;
+            }
+            reject(new Error(
+              "Found the game but couldn't connect to it. This Wi-Fi may block device-to-device connections. " +
+              "Put both devices on the same network, or use \"Skip - Use Laptop Only\" on the laptop."
+            ));
+          }, 15000);
+
           conn.on('open', () => {
             if (isResolved) return; // Already timed out
 
+            clearTimeout(connectTimeout);
             isResolved = true;
             console.log('[PeerSync] ✅ Successfully connected to host!');
             console.log('[PeerSync] Connection is open and ready for data transfer');
@@ -217,6 +263,7 @@ export class PeerGameSync {
           conn.on('error', (error) => {
             if (isResolved) return; // Already handled
 
+            clearTimeout(connectTimeout);
             isResolved = true;
             console.error('[PeerSync] ❌ Connection error:', error);
             reject(error);
@@ -227,6 +274,7 @@ export class PeerGameSync {
           if (isResolved) return; // Already timed out or resolved
 
           clearTimeout(timeout);
+          clearTimeout(connectTimeout);
           isResolved = true;
           console.error('[PeerSync] ❌ Peer error:', error);
           console.error('[PeerSync] Error type:', error.type);

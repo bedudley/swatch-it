@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useJoinHost } from "@/lib/usePeerSync";
+import { peerIdFromRoomInput } from "@/lib/peerSync";
 import Logo from "@/components/Logo";
 
 function JoinContent() {
@@ -23,7 +24,7 @@ function JoinContent() {
     setJoinStatus("joining");
 
     try {
-      await joinHost(id);
+      await joinHost(peerIdFromRoomInput(id));
       setJoinStatus("success");
 
       // Wait a moment to show success message, then redirect to host view

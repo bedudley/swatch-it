@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import QRCode from "react-qr-code";
 import { usePeerStatus } from "@/lib/usePeerSync";
+import { roomCodeFromPeerId } from "@/lib/peerSync";
 
 interface ConnectionModalProps {
   isOpen: boolean;
@@ -100,7 +101,7 @@ export default function ConnectionModal({ isOpen, onClose, hostId }: ConnectionM
               <p className="text-sm text-text-secondary mb-2">Or enter room code:</p>
               <div className="bg-background px-4 py-3 rounded-lg">
                 <code className="text-2xl font-mono font-bold text-primary tracking-wider">
-                  {hostId.slice(0, 6).toUpperCase()}
+                  {roomCodeFromPeerId(hostId)}
                 </code>
               </div>
             </div>
